@@ -22,22 +22,25 @@ void decode_caesarwkey(char *x, int k, int ky, int key);
 void decode_caesarwokey(char *x, char *z, int k, int ky);
 
 int main()
-{
-    int k,ky,key=0,select=0; //k is array size constant, key is what the array is shifted by, select is used to select mode
+{   
+    //intialised array, used to quickly input a large message
+    char y[]="The quick brown fox jumps over a dog";
+    int ky=sizeof(y)/sizeof(char); //amount of elements in intialised array
+    
+    //initialised selection and key, used instead of an interactive menu, as it is quicker and easier
+    int select=1; //list selections here!
+    int key=9; //key used for decoding and encoding quickly
+    
+
+    
+    
+    
     char x[1000];
     
-    k=sizeof(x)/sizeof(char); //finds amount of elements in char which is used as a constant
+    int k=sizeof(x)/sizeof(char); //finds amount of elements in char which is used as a constant
     
     //array used to compare to x in brute force decoding of caesar cypher
     char z[k];
-    
-    //intialised array, used to quickly input a large message
-    char y[]="THE QUICK BROWN FOX JUMPS OVER A LAZY DOG";
-    ky=sizeof(y)/sizeof(char); //amount of elements in intialised array
-    
-    //initialised selection and key, used instead of an interactive menu, as it is quicker and easier
-    select=1; //list selections here!
-    key=17; //key used for decoding and encoding quickly
     
     char subref[]="zyxwvutsrqponmlkjlhgfedcba"; //reference list for substitution encoder
     
@@ -159,7 +162,7 @@ void print_code(char *x, int k, int ky){
     if(ky!=1){
         k=ky;
     }
-    for(int i=0; i<k; i++){
+    for(int i=0; x[i]!=0; i++){
         printf("%c",x[i]); //prints array element x[i] until i=k-1, then stop as this is the end of the array
     }
     printf("\n\n");

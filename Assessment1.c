@@ -1,6 +1,8 @@
 #include <stdio.h>
 
-void scancode(char *x, int k, int ky);
+void copy_array(char *x, char *y, int ky);
+
+void scancode(char *x, int k);
 
 void print_code(char *x, int k, int ky);
 
@@ -15,27 +17,20 @@ int main()
     char x[1000]; 
     
     //intialised array
-    char y[]="OLSSV DVYSK";
+    char y[]="";
     
     k=sizeof(x)/sizeof(char); //finds amount of elements in char which is used as a constant
     
     ky=sizeof(y)/sizeof(char); //elements in intialised array
     
-    for(int i=0; i<ky; i++){
-        x[i]=y[i];
-        if(islower(x[i])){
-            x[i]-=32;
-        }
+    
+    
+    if(ky!=1){
+        copy_array(x,y,ky);
+    }    
+    else    {
+        scancode(x,k);
     }
-    
-    print_code(x,k,ky);
-    
-    
-    
-    
-    
-    /*printf("Input message to code/decode: ");
-    scancode(x,k);*/
     
     printf("Select Mode\n");
     printf("1=encode using caesar cypher\n");
@@ -58,7 +53,18 @@ int main()
     return 0;
 }
 
-void scancode(char *x, int k, int ky){
+void copy_array(char *x, char *y, int ky){
+    for(int i=0; i<ky; i++){
+        x[i]=y[i];
+        if(islower(x[i])){
+            x[i]-=32;
+            }
+        }
+    printf("Using initialised message\n");
+}
+
+void scancode(char *x, int k){
+    printf("Input message to code/decode: ");
     char in;
     for(int n=0; n<k; n++){ 
         scanf("%c",&in);
@@ -67,9 +73,7 @@ void scancode(char *x, int k, int ky){
             x[n]-=32;
         }
         if(x[n]==10){
-            for(int i=n; i<k; i++){
-                x[i]=0;
-            }
+            n=k;
             break;
         }
     }
@@ -77,7 +81,7 @@ void scancode(char *x, int k, int ky){
 }
 
 void print_code(char *x, int k, int ky){
-    if(ky!=0){
+    if(ky!=1){
         k=ky;
     }
     for(int i=0; i<k; i++){
@@ -87,7 +91,7 @@ void print_code(char *x, int k, int ky){
 }
 
 void encode_caesar(char *x, int k, int ky){
-    if(ky!=0){
+    if(ky!=1){
         k=ky;
     }
     int key;
@@ -102,16 +106,14 @@ void encode_caesar(char *x, int k, int ky){
 
 void decode_caesarwkey(char *x, int k, int ky){
     int key;
-    if(ky!=0){
+    if(ky!=1){
         k=ky;
     }
     printf("Select key to use to decode: ");
     scanf("%d",&key);
     for(int n=0; n<k; n++){
-        
         if(isupper(x[n])){
-            x[n]=(((x[n]-65)-key)%26)+65;
-            //printf("%d   %d\n",n,x[n]);
+            x[n]=((26+(x[n]-65)-key)%26)+65;
         }
     }
 } 

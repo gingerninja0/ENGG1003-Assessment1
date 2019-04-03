@@ -3,6 +3,11 @@
 
 /*INCLUDE SHORT FUNCTION FUNCTIONALITY HERE*/
 
+/*To do list
+file i/o
+sustitution cypher encode and decode
+add dictionary and use it in caesar cypher decryption without key so only the correct output is printed, so there is not 25*/
+
 void mode_auto(int select, char *x,char *z, int k, int ky, int key);
 
 void mode_select(int select, char *x, char *z, int k, int ky, int key);
@@ -28,7 +33,7 @@ int main()
     int ky=sizeof(y)/sizeof(char); //amount of elements in intialised array
     
     //initialised selection and key, used instead of an interactive menu, as it is quicker and easier
-    int select=1; //list selections here!
+    int select=2; //list selections here!
     int key=9; //key used for decoding and encoding quickly
     
 

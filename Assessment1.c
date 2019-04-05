@@ -26,6 +26,8 @@ void decode_caesarwkey(char *x, int k, int ky, int key);
 
 void decode_caesarwokey(char *x, char *z, int k, int ky);
 
+void encode_substitution(char *x, int k, char *subrefi);
+
 int main()
 {   
     //intialised array, used to quickly input a large message
@@ -33,10 +35,10 @@ int main()
     int ky=sizeof(y)/sizeof(char); //amount of elements in intialised array
     
     //initialised selection and key, used instead of an interactive menu, as it is quicker and easier
-    int select=2; //list selections here!
-    int key=9; //key used for decoding and encoding quickly
+    //int select=2; //list selections here!
+    //int key=9; //key used for decoding and encoding quickly
     
-
+    
     
     
     
@@ -45,11 +47,15 @@ int main()
     int k=sizeof(x)/sizeof(char); //finds amount of elements in char which is used as a constant
     
     //array used to compare to x in brute force decoding of caesar cypher
-    char z[k];
+    //char z[k];
     
-    char subref[]="zyxwvutsrqponmlkjlhgfedcba"; //reference list for substitution encoder
+    //             abcdefghijklmnopqrstuvwxyz   the alphabet
     
-    char subkey[]="zyxwvutsrqponmlkjlhgfedcba"; //where key to decode substitution cypher goes, can also use scanf to input this
+    char subrefi[]="ZYXWVUTSRQPONMLKJIHGFEDCBA"; //reference list for substitution encoder
+    
+    char subkeyi[]="ZYXWVUTSRQPONMLKJIHGFEDCBA"; //where key to decode substitution cypher goes, can also use scanf to input this
+    
+    char subkeys[26];
     
     /*if an array is initialised, then it skips using scan_code, the copies string to array x using copy_array_yx
     so it can be changed in the program*/
@@ -61,16 +67,53 @@ int main()
     else    {
         scan_code(x,k);
     }
+    
+    encode_substitution(x,k,subrefi);
+    
+    print_code(x,k,ky);
+    
+    
     /*if there is not mode selected through initialisation then read user inputs using mode_select()*/
-    if(select==0){
-        mode_select(select,x,z,k,ky,key);
-    }
+    //if(select==0){
+        //mode_select(select,x,z,k,ky,key);
+    //}
     /*else there must be an initialised selection, use mode_auto() to show relevant mode selected*/
-    else {
-        mode_auto(select,x,z,k,ky,key);
-    }
+    //else {
+        //mode_auto(select,x,z,k,ky,key);
+    //}
     
     return 0;
+}
+
+
+
+void encode_substitution(char *x, int k, char *subrefi){
+    int mode, code;
+    printf("Use initialised substitution or type in key\n");
+    printf("1=initialised substitution\n");
+    printf("2=substitution from file\n\n");
+    printf("Select mode: ");
+    scanf("%d", &mode);
+    printf("\n");
+    
+    switch(mode){
+        case 1:
+            for(int n=0; n<k; n++){
+            if(isupper(x[n])){
+                code=x[n]-65;
+                x[n]=subrefi[code];
+                }
+            }
+            break;
+        case 2: //this is where it will encode from file
+            for(int n=0; n<k; n++){
+            if(isupper(x[n])){
+                code=x[n]-65;
+                x[n]=subrefi[code];
+                }
+            }
+            break;
+    }
 }
 
 /*uses the initialised value for select to select mode and call relevant function, includes relevant prints so it makes

@@ -45,7 +45,7 @@ int main()
     char x[1000];
     
     int k=sizeof(x)/sizeof(char); //finds amount of elements in char which is used as a constant
-    
+    int code;
     //array used to compare to x in brute force decoding of caesar cypher
     //char z[k];
     
@@ -72,6 +72,13 @@ int main()
     
     print_code(x,k,ky);
     
+    for(int n=0; n<k; n++){
+        if(isupper(x[n])){
+            code=x[n]-65;
+            x[n]=subkeyi[code];
+        }    
+    }
+    print_code(x,k,ky);
     
     /*if there is not mode selected through initialisation then read user inputs using mode_select()*/
     //if(select==0){
@@ -86,6 +93,29 @@ int main()
 }
 
 
+void deencode_substitution(char *x, int k, char *subrefi){
+    int mode, code;
+    printf("Use initialised substitution or type in key\n");
+    printf("1=initialised substitution\n");
+    printf("2=substitution from file\n\n");
+    printf("Select mode: ");
+    scanf("%d", &mode);
+    printf("\n");
+    
+    for(int n=0; n<k; n++){
+        if(isupper(x[n])){
+            code=x[n]-65;
+        switch(mode){
+            case 1:
+                x[n]=subrefi[code];
+                break;
+            case 2: //this is where it will encode from file
+                x[n]=subrefi[code];
+                break;
+            }
+        }    
+    }
+}
 
 void encode_substitution(char *x, int k, char *subrefi){
     int mode, code;
@@ -96,23 +126,18 @@ void encode_substitution(char *x, int k, char *subrefi){
     scanf("%d", &mode);
     printf("\n");
     
-    switch(mode){
-        case 1:
-            for(int n=0; n<k; n++){
-            if(isupper(x[n])){
-                code=x[n]-65;
+    for(int n=0; n<k; n++){
+        if(isupper(x[n])){
+            code=x[n]-65;
+        switch(mode){
+            case 1:
                 x[n]=subrefi[code];
-                }
-            }
-            break;
-        case 2: //this is where it will encode from file
-            for(int n=0; n<k; n++){
-            if(isupper(x[n])){
-                code=x[n]-65;
+                break;
+            case 2: //this is where it will encode from file
                 x[n]=subrefi[code];
-                }
+                break;
             }
-            break;
+        }    
     }
 }
 

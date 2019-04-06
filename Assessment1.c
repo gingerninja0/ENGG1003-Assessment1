@@ -33,7 +33,7 @@ void deencode_substitution(char *x, int k, char *subrefi);
 int main()
 {   
     //intialised array, used to quickly input a large message
-    char y[]="The quick brown fox jumps over a dog";
+    char y[]="the quick brown fox jumps over the lazy fox";
     int ky=sizeof(y)/sizeof(char); //amount of elements in intialised array
     
     //initialised selection and key, used instead of an interactive menu, as it is quicker and easier
@@ -55,9 +55,9 @@ int main()
     
     char subrefi[]="ZEBRASCDFGHIJKLMNOPQTUVWXY"; //reference list for substitution encoder
     
-    char subkeyi[]="ZEBRASCDFGHIJKLMNOPQTUVWXY"; //where key to decode substitution cypher goes, can also use scanf to input this
+    //char subkeyi[]=""; //where key to decode substitution cypher goes, can also use scanf to input this
     
-    char subkey[26];
+    char subrefd[26];
     
     /*if an array is initialised, then it skips using scan_code, the copies string to array x using copy_array_yx
     so it can be changed in the program*/
@@ -74,22 +74,30 @@ int main()
     
     print_code(x,k,ky);
     
-    for(int n=0; n<k; n++){
-        if(isupper(x[n])){
-            code=x[n]-65;
-            
-            x[n]=subkeyi[code];
-            
-            
-            
-            
-            
-            
-            
-        }    
+    int l;
+    
+    for(int n=0; n<26; n++){
+        l=subrefi[n];
+        subrefd[l]=n;
+        printf("%c",subrefd[l]);
     }
     
-    print_code(x,k,ky);
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    //print_code(x,k,ky);
     
     /*if there is not mode selected through initialisation then read user inputs using mode_select()*/
     //if(select==0){
@@ -112,6 +120,7 @@ void deencode_substitution(char *x, int k, char *subrefi){
     printf("Select mode: ");
     scanf("%d", &mode);
     printf("\n");
+    mode=1;
     
     for(int n=0; n<k; n++){
         if(isupper(x[n])){
@@ -134,9 +143,9 @@ void encode_substitution(char *x, int k, char *subrefi){
     printf("1=initialised substitution\n");
     printf("2=substitution from file\n\n");
     printf("Select mode: ");
-    scanf("%d", &mode);
+    //scanf("%d", &mode);
     printf("\n");
-    
+    mode=1;
     for(int n=0; n<k; n++){
         if(isupper(x[n])){
             code=x[n]-65;

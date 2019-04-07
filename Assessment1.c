@@ -8,9 +8,9 @@ file i/o
 sustitution cypher encode and decode
 add dictionary and use it in caesar cypher decryption without key so only the correct output is printed, so there is not 25*/
 
-void mode_auto(int select, char *x,char *z, int k, int key, char *subkeyen, char *subkeyde);
+void mode_auto(int select, char *x,char *z, int k, int key, char *subkeyen, char *subkeyde, int intmode);
 
-void mode_select(int select, char *x, char *z, int k, int key, char *subkeyen, char *subkeyde);
+void mode_select(int select, char *x, char *z, int k, int key, char *subkeyen, char *subkeyde, int intmode);
 
 void copy_array_yx(char *x, char *y, int ky);
 
@@ -26,11 +26,11 @@ void decode_caesarwkey(char *x, int k, int key);
 
 void decode_caesarwokey(char *x, char *z, int k);
 
-void encode_substitution(char *x, int k, char *subrefi, int intitialselect);
+void encode_substitution(char *x, int k, char *subrefi, int intitialselect, int intmode);
 
-void create_substitution_key(char *subkeyen, char *subkeyde);
+void create_substitution_key(char *subkeyen, char *subkeyde, int intmode);
 
-void decode_substitution(char *x, int k, char *subkeyen, char *subkeyde);
+void decode_substitution(char *x, int k, char *subkeyen, char *subkeyde, int intmode);
 
 int main()
 {   
@@ -39,15 +39,27 @@ int main()
     int ky=sizeof(y)/sizeof(char); //amount of elements in intialised array
     
     //initialised selection and key, used instead of an interactive menu, as it is quicker and easier
-    int intitialselect,select=0; //list selections here!
+    int select=4; //list selections here!
     
-    if(select==0){
-        intitialselect=;
-    }
-    printf("intitialselect is %d\n\n", intitialselect);
+    int intmode;
+    
     int key=9; //key used for decoding and encoding quickly
     //               abcdefghijklmnopqrstuvwxyz   the alphabet
     char subkeyen[]="ZEBRASCDFGHIJKLMNOPQTUVWXY"; //reference list for substitution encoder/decode
+    
+    if(select==0){
+        if(sizeof(subkeyen)>1){
+            intmode=2;
+        }
+        else {
+            intmode=1;
+        }
+    }
+    //will include an if for when there is a file being included
+    else if(sizeof(subkeyen)>1) {
+        intmode=2;
+    }
+    
     
     
     
@@ -59,7 +71,7 @@ int main()
     //array used to compare to x in brute force decoding of caesar cypher
     char z[k];
     
-    char subkeysc[26]; //use scanf to put a random alphabet in here
+    //char subkeysc[26]; //use scanf to put a random alphabet in here
     
     char subkeyde[26];
     
@@ -76,18 +88,18 @@ int main()
     
     /*if there is not mode selected through initialisation then read user inputs using mode_select()*/
     if(select==0){
-        mode_select(select,x,z,k,key,subkeyen,subkeyde);
+        mode_select(select,x,z,k,key,subkeyen,subkeyde,intmode);
     }
     /*else there must be an initialised selection, use mode_auto() to show relevant mode selected*/
     else {
-        mode_auto(select,x,z,k,key,subkeyen,subkeyde);
+        mode_auto(select,x,z,k,key,subkeyen,subkeyde,intmode);
     }
     
     return 0;
 }
 
-void decode_substitution(char *x, int k, char *subkeyen, char *subkeyde){
-    create_substitution_key(subkeyen,subkeyde);
+void decode_substitution(char *x, int k, char *subkeyen, char *subkeyde, int intmode){
+    create_substitution_key(subkeyen,subkeyde,intmode);
     int code;
     for(int n=0; n<k; n++){
         if(isupper(x[n])){
@@ -99,29 +111,24 @@ void decode_substitution(char *x, int k, char *subkeyen, char *subkeyde){
 
 
 
-void encode_substitution(char *x, int k, char *subkeyen, int intitialselect){
-    int mode, code;
-
+void encode_substitution(char *x, int k, char *subkeyen, int select, int intmode){
+    int code;
     char subkeysc[26]; //what scanf will input too
-    if(intitialselect!=0){
-        if(sizeof(subkeyen)>1){
-            mode=2;
-        }
-        else {
-            mode=3; //select file to use for key
-        }
-    }
-    else {
-        printf("Input desired substitution key (in capitals): ");
+    
+    if(intmode==1){
+        printf("Input alphabet key: ");
         scanf("%s",&subkeysc);
-        mode=1;
     }
-
+    else if(intmode==2){
+        printf("Using initialised key: %s\n\n",subkeyen);
+    }
+    //this is where it will say it is using key from file
+    
     for(int n=0; n<k; n++){
         if(isupper(x[n])){
             code=x[n]-65;
-        switch(mode){
-            case 1:
+        switch(intmode){
+            case 1: //encode from scanf
                 x[n]=subkeysc[code];
                 break;
             case 2: //encode from initialised string
@@ -136,7 +143,7 @@ void encode_substitution(char *x, int k, char *subkeyen, int intitialselect){
 
 /*uses the initialised value for select to select mode and call relevant function, includes relevant prints so it makes
 sense in the context of auto select*/
-void mode_auto(int select, char *x,char *z, int k, int key, char *subkeyen, char *subkeyde){
+void mode_auto(int select, char *x,char *z, int k, int key, char *subkeyen, char *subkeyde, int intmode){
     switch(select){
         case 1:
             printf("Encoding message using caesar cypher using key: %d\n\n",key);
@@ -154,19 +161,19 @@ void mode_auto(int select, char *x,char *z, int k, int key, char *subkeyen, char
             break;
         case 4:
             printf("Encoding message using substitution cypher\n\n");
-            encode_substitution(x,k,subkeyen,select);
+            encode_substitution(x,k,subkeyen,select,intmode);
             print_code(x,k);
             break;
         case 5:
             printf("Decoding message using substitution cypher using substitution key");
-            decode_substitution(x,k,subkeyen,subkeyde);
+            decode_substitution(x,k,subkeyen,subkeyde,intmode);
             print_code(x,k);
             break;
     }
 }
 
 /*prompts user to select mode and calls relevant function*/
-void mode_select(int select, char *x, char *z, int k, int key, char *subkeyen, char *subkeyde){
+void mode_select(int select, char *x, char *z, int k, int key, char *subkeyen, char *subkeyde, int intmode){
     printf("Mode Selection Menu\n");
     printf("1: encode using caesar cypher\n");
     printf("2: decode caesar cypher with known key\n");
@@ -189,11 +196,11 @@ void mode_select(int select, char *x, char *z, int k, int key, char *subkeyen, c
             decode_caesarwokey(x,z,k); //call decode_caesarwokey() to decode message with out a key being provided
             break;
         case 4:
-            encode_substitution(x,k,subkeyen,select);
+            encode_substitution(x,k,subkeyen,select,intmode);
             print_code(x,k);
             break;
         case 5:
-            decode_substitution(x,k,subkeyen,subkeyde);
+            decode_substitution(x,k,subkeyen,subkeyde,intmode);
             print_code(x,k);
             break;    
     }
@@ -222,7 +229,7 @@ void copy_array_yx(char *x, char *y, int k){
     printf("Using initialised message\n\n");
 }
 
-void create_substitution_key(char *subkeyen, char *subkeyde){
+void create_substitution_key(char *subkeyen, char *subkeyde, int intmode){
     int l;
     for(int n=0; n<26; n++){
         if(isupper(subkeyen[n])){
@@ -231,7 +238,6 @@ void create_substitution_key(char *subkeyen, char *subkeyde){
         }
     }
 }
-
 
 /*prompts user to input a message which is saved into array x, which is size k*/
 void scan_code(char *x, int k){

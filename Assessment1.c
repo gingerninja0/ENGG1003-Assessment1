@@ -35,17 +35,17 @@ void decode_substitution(char *x, int k, char *subkeyen, char *subkeyde, int int
 int main()
 {   
     //intialised array, used to quickly input a large message
-    char y[]="the quick brown fox jumps over the lazy fox";
+    char y[]="PDA MQFBH ENKUY RKC GQJLO KTAN PDA IZXW SKV";
     int ky=sizeof(y)/sizeof(char); //amount of elements in intialised array
     
     //initialised selection and key, used instead of an interactive menu, as it is quicker and easier
-    int select=4; //list selections here!
+    int select=5; //list selections here!
     
     int intmode;
     
     int key=9; //key used for decoding and encoding quickly
     //               abcdefghijklmnopqrstuvwxyz   the alphabet
-    char subkeyen[]="ZEBRASCDFGHIJKLMNOPQTUVWXY"; //reference list for substitution encoder/decode
+    char subkeyen[]="ZEBRASCDFGHIJYKLMNOPQTUVWX"; //reference list for substitution encoder/decode
     
     if(select==0){
         if(sizeof(subkeyen)>1){

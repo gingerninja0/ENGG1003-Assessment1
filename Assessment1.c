@@ -30,12 +30,15 @@ void create_substitution_key(char *subkeyen, char *subkeyde);
 
 void decode_substitution(char *x, int k, char *subkeyen, char *subkeyde);
 
-int main()
+int main(void)
 {
-    int k=10;//k is the size of the array which is made by checking amount of characters in the input file, is set to -2 so the 2 characters at end are ignored
+    //This is used in creating size of array, turn this off for more stable behaviour
+    int k=32;//k is the size of the array which is made by checking amount of characters in the input file, is set to -2 so the 2 characters at end are ignored
+    
     char c;
     int key,select,i;
     char subkeyen[27]="";
+    
     /*
      * the file Input layout is:
      * 
@@ -60,13 +63,17 @@ int main()
         perror("Output fopen()");
         return 0;
     }
+    //This is more efficient but unstable
+    //creates an array of size k
     while((c=getc(input))!=EOF){
         k++;
     }
+    char x[k];
     rewind(input);
     
-    //creates an array of size k
-    char x[k];
+    //turn this on for stable and consistent behaviour
+    /*char x[100];
+    int k=sizeof(x);*/
     
     fscanf(input, "%d", &select);
     
@@ -93,7 +100,7 @@ int main()
         }
         x[i]=c;
     }
-    fclose(input);
+
     
     printf("Message from file\n\n%s\n\n",x); //prints the message after being converted to capitals
     
@@ -135,8 +142,12 @@ int main()
             decode_substitution(x,k,subkeyen,subkeyde);
             printf("%s",x);
             fprintf(output, "Decoding message using substitution cypher using key: %s\n\nEncoded message:\n%s",subkeyen,x);
-            break;
+            break;        
     }
+    fclose(input);
+    fclose(output);
+    fprintf(output, "\nhello\n");
+    
     
     return 0;
 }

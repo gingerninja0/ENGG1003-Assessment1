@@ -3,14 +3,17 @@
 
 /*INCLUDE SHORT FUNCTION FUNCTIONALITY HERE*/
 
+
+/*
+ * to do list
+ * finish file i/o
+ * file key selection int or string
+ * statistical analysis
+ */
 /*To do list
 file i/o
 sustitution cypher encode and decode
 add dictionary and use it in caesar cypher decryption without key so only the correct output is printed, so there is not 25*/
-
-void mode_auto(int select, char *x,char *z, int k, int key, char *subkeyen, char *subkeyde);
-
-void copy_array_yx(char *x, char *y, int ky);
 
 void copy_array_xz(char *x, char *z, int k);
 
@@ -42,8 +45,11 @@ int main()
      * mode
      * key
      * message to encode/decode
+     * 
      */
     FILE *input;
+    FILE *output;
+    output=fopen("output.txt","w");
     
     char c;
     int key,select;
@@ -71,11 +77,6 @@ int main()
     printf("Message from file\n\n"); //prints the message after being converted to capitals
     print_code(x,k);
     
-
-    //intialised array, used to quickly input a large message
-    //char y[]="PDA MQFBH ENKUY RKC GQJLO KTAN PDA IZXW SKV";
-    //int ky=sizeof(y)/sizeof(char); //amount of elements in intialised array
-    
     //initialised selection and key, used instead of an interactive menu, as it is quicker and easier
     //               abcdefghijklmnopqrstuvwxyz   the alphabet
     char subkeyen[]="ZEBRASCDFGHIJYKLMNOPQTUVWX"; //reference list for substitution encoder/decode
@@ -85,13 +86,37 @@ int main()
     //array used to compare to x in brute force decoding of caesar cypher
     char z[k];
     
-    //char subkeysc[26]; //use scanf to put a random alphabet in here
-    
     char subkeyde[26];
     
-    
-    mode_auto(select,x,z,k,key,subkeyen,subkeyde);
-    
+    switch(select){
+        case 1:
+            printf("Encoding message using caesar cypher using key: %d\n\n",key);
+            encode_caesar(x,k,key); //call encode_caesar() to encode message
+            print_code(x,k); //prints encoded message using print_code()
+            break;
+        case 2:
+            printf("Decoding message using caesar cypher using key %d\n\n",key);
+            decode_caesarwkey(x,k,key); //call caesar decode_caesarwkey() function
+            print_code(x,k); //prints decoded message using print_code()
+            break;
+        case 3:
+            printf("Decoding message using brute force\n\n");
+            decode_caesarwokey(x,z,k); //call decode_caesarwokey() to decode message with out a key being provided
+            break;
+        case 4:
+            printf("Encoding message using substitution cypher with key: %s\n\n",subkeyen);
+            encode_substitution(x,k,subkeyen);
+            print_code(x,k);
+            break;
+        case 5:
+            printf("Decoding message using substitution cypher using substitution key: %s\n\n",subkeyen);
+            decode_substitution(x,k,subkeyen,subkeyde);
+            print_code(x,k);
+            break;
+    }
+
+    fprintf(output, "hello\n");
+    fprintf(output, "world");
 
 
 
@@ -122,37 +147,6 @@ void encode_substitution(char *x, int k, char *subkeyen){
     }
 }
 
-/*uses the initialised value for select to select mode and call relevant function, includes relevant prints so it makes
-sense in the context of auto select*/
-void mode_auto(int select, char *x,char *z, int k, int key, char *subkeyen, char *subkeyde){
-    switch(select){
-        case 1:
-            printf("Encoding message using caesar cypher using key: %d\n\n",key);
-            encode_caesar(x,k,key); //call encode_caesar() to encode message
-            print_code(x,k); //prints encoded message using print_code()
-            break;
-        case 2:
-            printf("Decoding message using caesar cypher using key %d\n\n",key);
-            decode_caesarwkey(x,k,key); //call caesar decode_caesarwkey() function
-            print_code(x,k); //prints decoded message using print_code()
-            break;
-        case 3:
-            printf("Decoding message using brute force\n\n");
-            decode_caesarwokey(x,z,k); //call decode_caesarwokey() to decode message with out a key being provided
-            break;
-        case 4:
-            printf("Encoding message using substitution cypher\n\n");
-            encode_substitution(x,k,subkeyen);
-            print_code(x,k);
-            break;
-        case 5:
-            printf("Decoding message using substitution cypher using substitution key");
-            decode_substitution(x,k,subkeyen,subkeyde);
-            print_code(x,k);
-            break;
-    }
-}
-
 /*copys each element of array x into array z, used in brute force decoding of caesar cypher*/
 void copy_array_xz(char *x, char *z, int k){
     for(int i=0; i<k; i++){
@@ -162,18 +156,6 @@ void copy_array_xz(char *x, char *z, int k){
             x[i]-=32;
             }
         }
-}
-
-/*copys each element of array y into array x, used in initialised string, as initialised string is constant so it is copied to array x*/
-void copy_array_yx(char *x, char *y, int k){
-    for(int i=0; i<k; i++){
-        x[i]=y[i]; //copies element y[i] into element x[i]
-        //is the char is lower case then it is converted to upper case
-        if(islower(x[i])){
-            x[i]-=32;
-            }
-        }
-    printf("Using initialised message\n\n");
 }
 
 void create_substitution_key(char *subkeyen, char *subkeyde){

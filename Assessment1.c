@@ -7,10 +7,14 @@
 /*
  * to do list
  * finish file i/o
- * file key selection int or string
+ *  file key selection int or string
  * statistical analysis
  */
 
+/*
+ * known problems
+ * using a counter to make the size of array x sometimes causes then program to not run, if this is removed and a preintitialised array of a large size is made then there is no problem
+ */
 
 void copy_array_xz(char *x, char *z, int k);
 
@@ -28,10 +32,10 @@ void decode_substitution(char *x, int k, char *subkeyen, char *subkeyde);
 
 int main()
 {
-    int k=-2;//k is the size of the array which is made by checking amount of characters in the input file, is set to -2 so the 2 characters at end are ignored
+    int k=10;//k is the size of the array which is made by checking amount of characters in the input file, is set to -2 so the 2 characters at end are ignored
     char c;
-    int key,select;
-    
+    int key,select,i;
+    char subkeyen[27]="";
     /*
      * the file Input layout is:
      * 
@@ -66,14 +70,22 @@ int main()
     
     fscanf(input, "%d", &select);
     
-    /*if(select<=3){
+    if(select<=3){
         fscanf(input, "%d", &key);
-    }*/
-    
-    fscanf(input, "%d", &key); //make it chose if 1-3 int key, if not then string key of random alphabet
+    }
+    else    {
+        while(i<26){
+            fscanf(input, "%c", &c);
+            if(isupper(c)){
+                subkeyen[i]=c;
+                i++;
+            }
+        }
+    }
+    //fscanf(input, "%d", &key); //make it chose if 1-3 int key, if not then string key of random alphabet
     
     //puts message into array x
-    for(int i=0; i<k; i++){
+    for(i=0; i<k; i++){
         fscanf(input, "%c", &c);
         if(feof(input)!=0) i=k;
         if(islower(c)){
@@ -85,8 +97,8 @@ int main()
     
     printf("Message from file\n\n%s\n\n",x); //prints the message after being converted to capitals
     
-    //               abcdefghijklmnopqrstuvwxyz   the alphabet
-    char subkeyen[]="ZEBRASCDFGHIJYKLMNOPQTUVWX"; //reference list for substitution encoder/decode
+    //                 abcdefghijklmnopqrstuvwxyz   the alphabet
+    //char subkeyen[]="ZEBRASCDFGHIJYKLMNOPQTUVWX"; //reference list for substitution encoder/decode
     
     
     
@@ -116,13 +128,13 @@ int main()
             printf("Encoding message using substitution cypher with key: %s\n\n",subkeyen);
             encode_substitution(x,k,subkeyen);
             printf("%s",x);
-            fprintf(output, "Encoding message using substitution cypher using key: %s\n\nEncoded message:\n\n%s",subkeyen,x);
+            fprintf(output, "Encoding message using substitution cypher using key: %s\n\nEncoded message:\n%s",subkeyen,x);
             break;
         case 5:
             printf("Decoding message using substitution cypher using substitution key: %s\n\n",subkeyen);
             decode_substitution(x,k,subkeyen,subkeyde);
             printf("%s",x);
-            fprintf(output, "Decoding message using substitution cypher using key: %s\n\nEncoded message:\n\n%s",subkeyen,x);
+            fprintf(output, "Decoding message using substitution cypher using key: %s\n\nEncoded message:\n%s",subkeyen,x);
             break;
     }
     

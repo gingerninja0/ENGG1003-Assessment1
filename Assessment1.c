@@ -10,16 +10,9 @@
  * file key selection int or string
  * statistical analysis
  */
-/*To do list
-file i/o
-sustitution cypher encode and decode
-add dictionary and use it in caesar cypher decryption without key so only the correct output is printed, so there is not 25*/
+
 
 void copy_array_xz(char *x, char *z, int k);
-
-void scan_code(char *x, int k);
-
-void print_code(char *x, int k);
 
 void encode_caesar(char *x, int k, int key);
 
@@ -35,38 +28,54 @@ void decode_substitution(char *x, int k, char *subkeyen, char *subkeyde);
 
 int main()
 {
-    char x[1000];
-    int k=sizeof(x)/sizeof(char); //finds amount of elements in char which is used as a constant
-    
+    int k=-2;//k is the size of the array which is made by checking amount of characters in the input file, is set to -2 so the 2 characters at end are ignored
+    char c;
+    int key,select;
     
     /*
-     * the file layout is:
+     * the file Input layout is:
      * 
      * mode
      * key
      * message to encode/decode
      * 
      */
+    
+    
     FILE *input;
     FILE *output;
+    
+    input=fopen("input.txt", "r");
     output=fopen("output.txt","w");
     
-    char c;
-    int key,select;
-    input=fopen("input.txt", "r");
-    
     if(input==NULL){
-        perror("fopen()");
+        perror("Input fopen()");
         return 0;
     }
+    if(output==NULL){
+        perror("Output fopen()");
+        return 0;
+    }
+    while((c=getc(input))!=EOF){
+        k++;
+    }
+    rewind(input);
+    
+    //creates an array of size k
+    char x[k];
     
     fscanf(input, "%d", &select);
     
+    /*if(select<=3){
+        fscanf(input, "%d", &key);
+    }*/
+    
     fscanf(input, "%d", &key); //make it chose if 1-3 int key, if not then string key of random alphabet
     
+    //puts message into array x
     for(int i=0; i<k; i++){
         fscanf(input, "%c", &c);
-        if(feof(input)!=0) break;
+        if(feof(input)!=0) i=k;
         if(islower(c)){
             c-=32;
         }
@@ -74,10 +83,8 @@ int main()
     }
     fclose(input);
     
-    printf("Message from file\n\n"); //prints the message after being converted to capitals
-    print_code(x,k);
+    printf("Message from file\n\n%s\n\n",x); //prints the message after being converted to capitals
     
-    //initialised selection and key, used instead of an interactive menu, as it is quicker and easier
     //               abcdefghijklmnopqrstuvwxyz   the alphabet
     char subkeyen[]="ZEBRASCDFGHIJYKLMNOPQTUVWX"; //reference list for substitution encoder/decode
     
@@ -85,19 +92,21 @@ int main()
     
     //array used to compare to x in brute force decoding of caesar cypher
     char z[k];
-    
+    // these two are archaic and will probably be removed later
     char subkeyde[26];
-    
+
     switch(select){
         case 1:
             printf("Encoding message using caesar cypher using key: %d\n\n",key);
-            encode_caesar(x,k,key); //call encode_caesar() to encode message
-            print_code(x,k); //prints encoded message using print_code()
+            encode_caesar(x,k,key); //call encode_caesar()
+            printf("%s",x);
+            fprintf(output, "Encoding message using caesar cypher using key: %d\n\nEncoded message:\n\n%s",key,x);
             break;
         case 2:
             printf("Decoding message using caesar cypher using key %d\n\n",key);
-            decode_caesarwkey(x,k,key); //call caesar decode_caesarwkey() function
-            print_code(x,k); //prints decoded message using print_code()
+            decode_caesarwkey(x,k,key); //call caesar decode_caesarwkey()
+            printf("%s",x);
+            fprintf(output, "Decoding message using caesar cypher using key: %d\n\nDecoded message:\n\n%s",key,x);
             break;
         case 3:
             printf("Decoding message using brute force\n\n");
@@ -106,20 +115,16 @@ int main()
         case 4:
             printf("Encoding message using substitution cypher with key: %s\n\n",subkeyen);
             encode_substitution(x,k,subkeyen);
-            print_code(x,k);
+            printf("%s",x);
+            fprintf(output, "Encoding message using substitution cypher using key: %s\n\nEncoded message:\n\n%s",subkeyen,x);
             break;
         case 5:
             printf("Decoding message using substitution cypher using substitution key: %s\n\n",subkeyen);
             decode_substitution(x,k,subkeyen,subkeyde);
-            print_code(x,k);
+            printf("%s",x);
+            fprintf(output, "Decoding message using substitution cypher using key: %s\n\nEncoded message:\n\n%s",subkeyen,x);
             break;
     }
-
-    fprintf(output, "hello\n");
-    fprintf(output, "world");
-
-
-
     
     return 0;
 }
@@ -134,8 +139,6 @@ void decode_substitution(char *x, int k, char *subkeyen, char *subkeyde){
         }
     }
 }
-
-
 
 void encode_substitution(char *x, int k, char *subkeyen){
     int code;
@@ -168,36 +171,7 @@ void create_substitution_key(char *subkeyen, char *subkeyde){
     }
 }
 
-/*prompts user to input a message which is saved into array x, which is size k*/
-void scan_code(char *x, int k){
-    printf("Input message to code/decode: ");
-    char in;
-    for(int n=0; n<k; n++){ 
-        scanf("%c",&in); //inputs message to in variable
-        x[n]=in; //each n element of in is assigned to x[n] element of array x
-        //is the char is lower case then it is converted to upper case
-        if(islower(x[n])){
-            x[n]-=32;
-        }
-        //once the endline symbol is reached, no more elements need to be assigned so the loops ends
-        if(x[n]==10){
-            n=k;
-            break;
-        }
-    }
-    printf("\n");
-}
-
-/*prints array to element k or if there is an initialised array then ky is used to make it more efficient*/
-void print_code(char *x, int k){ //update this to remove int k and fix comments !!!!!!!!!!!!!!!!!!!!!!
-    for(int i=0; x[i]!=0; i++){
-        printf("%c",x[i]); //prints array element x[i] until i=k-1, then stop as this is the end of the array
-    }
-    printf("\n\n");
-}
-
-/*encodes array x by a key which is inputed by the user or initialised, finishes at final element k, unless using 
-initialised message, then ky is used to prevent overflow*/
+/*encodes array x by a key which is read from file input.txt, finishes at final element k*/
 void encode_caesar(char *x, int k, int key){
     for(int n=0; n<k; n++){
         //this only encodes capital letters, leaves punctuation and spaces unencoded
@@ -208,8 +182,7 @@ void encode_caesar(char *x, int k, int key){
 
 }
 
-/*decodes array x by a key which is inputed by the user or initialised, finishes at final element k, unless using 
-initialised message, then ky is used to prevent overflow*/
+/*decodes array x by a key which is read from file input.txt, finishes at final element k*/
 void decode_caesarwkey(char *x, int k, int key){
     for(int n=0; n<k; n++){
         //this only decodes capital letters, leaves punctuation and spaces undecoded
@@ -232,6 +205,6 @@ void decode_caesarwokey(char *x, char *z, int k){
             }
         }
         printf("Key %d gives the message:\n",key);
-        print_code(z,k);
+        printf("%s",z);
     }
 }

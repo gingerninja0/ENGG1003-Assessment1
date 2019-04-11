@@ -1,6 +1,0 @@
-Encoding message using caesar cypher using key: 5
-
-Encoded message:
-
-
-YMJ VZNHP GWTBS KTC OZRUX TAJW YMJ QFED ITL

@@ -33,7 +33,7 @@ void decode_substitution(char *x, int k, char *subkeyen, char *subkeyde);
 int main(void)
 {
     //This is used in creating size of array, turn this off for more stable behaviour
-    int k=32;//k is the size of the array which is made by checking amount of characters in the input file, is set to -2 so the 2 characters at end are ignored
+    //int k=32;//k is the size of the array which is made by checking amount of characters in the input file, is set to -2 so the 2 characters at end are ignored
     
     char c;
     int key,select,i;
@@ -65,15 +65,15 @@ int main(void)
     }
     //This is more efficient but unstable
     //creates an array of size k
-    while((c=getc(input))!=EOF){
+    /*while((c=getc(input))!=EOF){
         k++;
     }
     char x[k];
-    rewind(input);
+    rewind(input);*/
     
     //turn this on for stable and consistent behaviour
-    /*char x[100];
-    int k=sizeof(x);*/
+    char x[10000];
+    int k=sizeof(x);
     
     fscanf(input, "%d", &select);
     
@@ -101,7 +101,7 @@ int main(void)
         x[i]=c;
     }
 
-    
+    //printf("subkeyen %s",subkeyen);
     printf("Message from file\n\n%s\n\n",x); //prints the message after being converted to capitals
     
     //                 abcdefghijklmnopqrstuvwxyz   the alphabet
@@ -142,11 +142,83 @@ int main(void)
             decode_substitution(x,k,subkeyen,subkeyde);
             printf("%s",x);
             fprintf(output, "Decoding message using substitution cypher using key: %s\n\nEncoded message:\n%s",subkeyen,x);
-            break;        
+            break;    
     }
     fclose(input);
     fclose(output);
-    fprintf(output, "\nhello\n");
+    
+    int freq[26];
+   
+    for(int i=0; i<26; i++){
+    freq[i]=0;
+    }
+    
+    
+    
+    
+    int t;
+    for(int i=0; i<k; i++){
+        t=x[i]-65;
+        freq[t]++;
+    }
+    
+    for(int i=0; i<26; i++){
+        printf("%c   %d\n",i+65,freq[i]);
+    }
+    int m=26;
+    int n,n1; 
+    int xn,x1,x2;
+    
+    
+    for(n=0; n<m; n++){
+        xn=freq[n];
+        printf("%d,",xn);
+    }
+    printf("\n\n");
+    
+    
+    for(n1=0; n1<m-1; n1++){
+        x1=freq[n1];
+        x2=freq[n1+1];
+        if(x2<x1){
+            freq[n1]=x2;
+            freq[n1+1]=x1;
+            n1=-1;
+        }
+    }   
+
+    for(n=0; n<m; n++){ 
+        xn=freq[n];
+        printf("%d,",xn);
+    }
+
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     
     
     return 0;

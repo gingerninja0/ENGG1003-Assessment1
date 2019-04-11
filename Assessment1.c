@@ -180,7 +180,7 @@ int main(void)
     for(n1=0; n1<m-1; n1++){
         x1=freq[n1];
         x2=freq[n1+1];
-        if(x2<x1){
+        if(x2>x1){
             freq[n1]=x2;
             freq[n1+1]=x1;
             n1=-1;

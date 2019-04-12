@@ -33,7 +33,7 @@ void decode_substitution(char *x, int k, char *subkeyen, char *subkeyde);
 int main(void)
 {
     //This is used in creating size of array, turn this off for more stable behaviour
-    int k;//k is the size of the array which is made by checking amount of characters in the input file, is set to -2 so the 2 characters at end are ignored
+    int k;//k is the size of the array which is made by checking amount of characters in the input file, is set to 100 so any special characters are accounted for.
     
     char c;
     int key,select,i;
@@ -44,7 +44,7 @@ int main(void)
      * 
      * mode
      * key
-     * message to encode/decode
+     * message to encode/decode (last character must be a space)
      * 
      */
     
@@ -72,7 +72,7 @@ int main(void)
     rewind(input);
     
     //turn this on for stable and consistent behaviour
-    /*char x[10000];
+    /*char x[1000];
     int k=sizeof(x);*/
     
     fscanf(input, "%d", &select);
@@ -94,15 +94,16 @@ int main(void)
     //puts message into array x
     for(i=0; i<k; i++){
         fscanf(input, "%c", &c);
-        
-        if(islower(c)){
-            c-=32;
+        if(feof(input)==0){
+            if(islower(c)){
+                c-=32;
+            }
+            x[i]=c;
+  
         }
-        x[i]=c; 
-        if(feof(input)!=0){
-           i=k;
-           x[i-4]=' '; //makes the last character not a repeat
-        } 
+        else    {
+            x[i]=0; //fills rest of array with 0 when at end of file
+        }
         
     }
 

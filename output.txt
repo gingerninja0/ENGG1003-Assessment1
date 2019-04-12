@@ -1,6 +1,6 @@
-Encoding message using caesar cypher using key: 1
+Encoding message using caesar cypher using key: 14
 
 Encoded message:
 
 
-RXFSUZVJPQBTEGHIKLMAYDWCONRXFSUZAAAAAAAZ 
+VSZZC KCFZR EKSFHM LMN  NML ONO  ... ONO OMOMONMOMNLHM EKSFHMIWCDOGRTUVXYZNLQJPBA

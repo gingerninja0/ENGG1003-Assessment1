@@ -33,7 +33,7 @@ void decode_substitution(char *x, int k, char *subkeyen, char *subkeyde);
 int main(void)
 {
     //This is used in creating size of array, turn this off for more stable behaviour
-    //int k=32;//k is the size of the array which is made by checking amount of characters in the input file, is set to -2 so the 2 characters at end are ignored
+    int k;//k is the size of the array which is made by checking amount of characters in the input file, is set to -2 so the 2 characters at end are ignored
     
     char c;
     int key,select,i;
@@ -65,15 +65,15 @@ int main(void)
     }
     //This is more efficient but unstable
     //creates an array of size k
-    /*while((c=getc(input))!=EOF){
+    while((c=getc(input))!=EOF){
         k++;
     }
     char x[k];
-    rewind(input);*/
+    rewind(input);
     
     //turn this on for stable and consistent behaviour
-    char x[10000];
-    int k=sizeof(x);
+    /*char x[10000];
+    int k=sizeof(x);*/
     
     fscanf(input, "%d", &select);
     
@@ -94,11 +94,16 @@ int main(void)
     //puts message into array x
     for(i=0; i<k; i++){
         fscanf(input, "%c", &c);
-        if(feof(input)!=0) i=k;
+        
         if(islower(c)){
             c-=32;
         }
-        x[i]=c;
+        x[i]=c; 
+        if(feof(input)!=0){
+           i=k;
+           x[i-4]=' '; //makes the last character not a repeat
+        } 
+        
     }
 
     //printf("subkeyen %s",subkeyen);
@@ -147,10 +152,13 @@ int main(void)
     fclose(input);
     fclose(output);
     
+    
+    printf("\n\n");
+    
     int freq[26];
    
     for(int i=0; i<26; i++){
-    freq[i]=0;
+        freq[i]=0;
     }
     
     
@@ -252,8 +260,8 @@ void copy_array_xz(char *x, char *z, int k){
         //is the char is lower case then it is converted to upper case
         if(islower(x[i])){
             x[i]-=32;
-            }
         }
+    }
 }
 
 void create_substitution_key(char *subkeyen, char *subkeyde){
@@ -274,7 +282,6 @@ void encode_caesar(char *x, int k, int key){
             x[n]=(((x[n]-65)+key)%26)+65; //encode formula, replaces letter x[n] with output from encryption formula
         }
     }
-
 }
 
 /*decodes array x by a key which is read from file input.txt, finishes at final element k*/

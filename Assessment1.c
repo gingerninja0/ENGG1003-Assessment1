@@ -179,7 +179,7 @@ int main()
     
     
     
-    /*for(n1=0; n1<m-1; n1++){
+    for(n1=0; n1<m-1; n1++){
         x1=freq[n1];
         x2=freq[n1+1];
         if(x2>x1){
@@ -192,7 +192,7 @@ int main()
     for(n=0; n<m; n++){ 
         xn=freq[n];
         printf("%d,",xn);
-    }*/
+    }
 
 
     

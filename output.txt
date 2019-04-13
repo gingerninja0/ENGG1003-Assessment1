@@ -1,6 +1,5 @@
-Encoding message using caesar cypher using key: 14
+Encoding message using substitution cypher using key: QWERTYUIOPASDFGHJKLZXCVBNM
 
 Encoded message:
 
-
-VSZZC KCFZR EKSFHM LMN  NML ONO  ... ONO OMOMONMOMNLHM EKSFHMIWCDOGRTUVXYZNLQJPBA
+ITSSG 123 VGKSR JVTKZN QLRY MBEC  EBMYRLQY

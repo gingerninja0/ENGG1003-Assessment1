@@ -30,15 +30,13 @@ void create_substitution_key(char *subkeyen, char *subkeyde);
 
 void decode_substitution(char *x, int k, char *subkeyen, char *subkeyde);
 
-int main(void)
+int main()
 {
-    //This is used in creating size of array, turn this off for more stable behaviour
-    int k;//k is the size of the array which is made by checking amount of characters in the input file, is set to 100 so any special characters are accounted for.
-    
+    int k=0;//k is the size of the array which is made by checking amount of characters in the input file, if not set to 0 then sometimes does not run
     char c;
     int key,select,i;
-    char subkeyen[27]="";
-    
+    char subkeyen[27]=""; //if this is not here then it pus an @ at then end of key
+    char subkeyde[26]; //used to make string to decode substitution cypher
     /*
      * the file Input layout is:
      * 
@@ -63,17 +61,14 @@ int main(void)
         perror("Output fopen()");
         return 0;
     }
-    //This is more efficient but unstable
-    //creates an array of size k
+    
+    //while not at EOF add to k+1 which is size of file
     while((c=getc(input))!=EOF){
         k++;
     }
-    char x[k];
-    rewind(input);
+    rewind(input); //resets to start of file after reading size
     
-    //turn this on for stable and consistent behaviour
-    /*char x[1000];
-    int k=sizeof(x);*/
+    char x[k]; //makes array slightly larger than required so it is more efficient
     
     fscanf(input, "%d", &select);
     
@@ -94,7 +89,9 @@ int main(void)
     //puts message into array x
     for(i=0; i<k; i++){
         fscanf(input, "%c", &c);
+        //if not at EOF then read character into x
         if(feof(input)==0){
+            //if the character is a lower case letter, make it upper case and then add to array x 
             if(islower(c)){
                 c-=32;
             }
@@ -107,18 +104,15 @@ int main(void)
         
     }
 
-    //printf("subkeyen %s",subkeyen);
-    printf("Message from file\n\n%s\n\n",x); //prints the message after being converted to capitals
+    printf("Message from file\n\n%s\n\n",x); //prints the message after being read and converted to upper case
     
     //                 abcdefghijklmnopqrstuvwxyz   the alphabet
     //char subkeyen[]="ZEBRASCDFGHIJYKLMNOPQTUVWX"; //reference list for substitution encoder/decode
     
     
     
-    //array used to compare to x in brute force decoding of caesar cypher
+    //array used to compare to x in brute force decoding of caesar cypher probably not needed anymore
     char z[k];
-    // these two are archaic and will probably be removed later
-    char subkeyde[26];
 
     switch(select){
         case 1:

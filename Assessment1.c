@@ -194,7 +194,31 @@ int main()
         printf("%d,",xn);
     }
 
-
+    /*
+    int freq[2][26];
+    
+    char x[]="HELLO";
+    
+    int k=sizeof(x);
+    
+    int t;
+    
+    
+    for(int j=0; j<26; j++){
+        freq[0][j]=j+65;
+        freq[1][j]=0;
+    }
+    
+    for(int i=0; i<k; i++){
+        t=x[i]-65;
+        freq[0][t]=x[i];
+        freq[1][t]++;
+    }
+    
+    for(int i=0; i<26; i++){
+        printf(" %c  %d\n",freq[0][i],freq[1][i]);
+    }
+    */
     
     
     

@@ -2,4 +2,4 @@ Encoding message using substitution cypher using key: QWERTYUIOPASDFGHJKLZXCVBNM
 
 Encoded message:
 
-ITSSG 123 VGKSR JVTKZN QLRY MBEC  EBMYRLQY
+TTTZZQ

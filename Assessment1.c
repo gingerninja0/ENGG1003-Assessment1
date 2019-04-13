@@ -6,15 +6,13 @@
 
 /*
  * to do list
- * finish file i/o
- *  file key selection int or string
+ * 
  * statistical analysis
+ *      find most common letter and assign it E, then second most common letter A, etc
+ * 
+ * 
  */
 
-/*
- * known problems
- * using a counter to make the size of array x sometimes causes then program to not run, if this is removed and a preintitialised array of a large size is made then there is no problem
- */
 
 void copy_array_xz(char *x, char *z, int k);
 
@@ -37,6 +35,7 @@ int main()
     int key,select,i;
     char subkeyen[27]=""; //if this is not here then it pus an @ at then end of key
     char subkeyde[26]; //used to make string to decode substitution cypher
+    
     /*
      * the file Input layout is:
      * 
@@ -85,7 +84,6 @@ int main()
             }
         }
     }
-    //fscanf(input, "%d", &key); //make it chose if 1-3 int key, if not then string key of random alphabet
     
     //puts message into array x
     for(i=0; i<k; i++){
@@ -156,6 +154,7 @@ int main()
    
     for(int i=0; i<26; i++){
         freq[i]=0;
+
     }
     
     int t;
@@ -179,7 +178,8 @@ int main()
     printf("\n\n");
     
     
-    for(n1=0; n1<m-1; n1++){
+    
+    /*for(n1=0; n1<m-1; n1++){
         x1=freq[n1];
         x2=freq[n1+1];
         if(x2>x1){
@@ -192,29 +192,9 @@ int main()
     for(n=0; n<m; n++){ 
         xn=freq[n];
         printf("%d,",xn);
-    }
+    }*/
 
 
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
     
     
     

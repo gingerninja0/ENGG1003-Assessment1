@@ -46,6 +46,7 @@ int main()
      * 
      */
     
+    //File io from 51 to 108
     
     FILE *input;
     FILE *output;
@@ -114,6 +115,7 @@ int main()
     //array used to compare to x in brute force decoding of caesar cypher probably not needed anymore
     char z[k];
 
+    //prints selected cypher and key in different ways depending one selection
     switch(select){
         case 1:
             printf("Encoding message using caesar cypher using key: %d\n\n",key);
@@ -155,9 +157,6 @@ int main()
     for(int i=0; i<26; i++){
         freq[i]=0;
     }
-    
-    
-    
     
     int t;
     for(int i=0; i<k; i++){

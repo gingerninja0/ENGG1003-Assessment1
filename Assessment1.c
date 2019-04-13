@@ -195,29 +195,69 @@ int main()
     }
 
     /*
-    int freq[2][26];
+    int freq[3][26];
     
-    char x[]="HELLO";
+    char x[]="RCR VYE BGBX HBNX FHB FXNQBRV YM RNXFH IZNQEBCJ FHB PCJB? C FHYEQHF KYF. CF'J KYF N JFYXV FHB DBRC PYEZR FBZZ VYE. CF'J N JCFH ZBQBKR. RNXFH IZNQEBCJ PNJ N RNXA ZYXR YM FHB JCFH, JY IYPBXMEZ NKR JY PCJB HB LYEZR EJB FHB MYXLB FY CKMZEBKLB FHB OCRCLHZYXCNKJ FY LXBNFB ZCMB… HB HNR JELH N AKYPZBRQB YM FHB RNXA JCRB FHNF HB LYEZR BGBK ABBI FHB YKBJ HB LNXBR NWYEF MXYO RVCKQ. FHB RNXA JCRB YM FHB MYXLB CJ N INFHPNV FY ONKV NWCZCFCBJ JYOB LYKJCRBX FY WB EKKNFEXNZ. HB WBLNOB JY IYPBXMEZ… FHB YKZV FHCKQ HB PNJ NMXNCR YM PNJ ZYJCKQ HCJ IYPBX, PHCLH BGBKFENZZV, YM LYEXJB, HB RCR. EKMYXFEKNFBZV, HB FNEQHF HCJ NIIXBKFCLB BGBXVFHCKQ HB AKBP, FHBK HCJ NIIXBKFCLB ACZZBR HCO CK HCJ JZBBI. CXYKCL. HB LYEZR JNGB YFHBXJ MXYO RBNFH, WEF KYF HCOJBZM.";
+    
+    char actfreq[]="ETAOINSRHDLUCMFYWGPBVKXQJZ";
+    
+    char calcfreq[27]="";
     
     int k=sizeof(x);
     
     int t;
     
+    int m=26;
+    int n,n1; 
+    int xn,x1,x2;
+    char y1,y2;
     
-    for(int j=0; j<26; j++){
-        freq[0][j]=j+65;
-        freq[1][j]=0;
-    }
-    
-    for(int i=0; i<k; i++){
-        t=x[i]-65;
-        freq[0][t]=x[i];
-        freq[1][t]++;
+    for(int i=0; i<26; i++){
+        freq[0][i]=actfreq[i];
     }
     
     for(int i=0; i<26; i++){
-        printf(" %c  %d\n",freq[0][i],freq[1][i]);
+        freq[1][i]=i+65;
+        freq[2][i]=0;
     }
+    
+    for(int i=0; i<k; i++){
+        if(isupper(x[i])){
+            t=x[i]-65;
+            freq[1][t]=x[i];
+            freq[2][t]++; 
+        }
+        
+    }
+    
+    for(n1=0; n1<m-1; n1++){
+        x1=freq[2][n1];
+        y1=freq[1][n1];
+        x2=freq[2][n1+1];
+        y2=freq[1][n1+1];
+        if(x2>x1){
+            freq[2][n1]=x2;
+            freq[1][n1]=y2;
+            freq[2][n1+1]=x1;
+            freq[1][n1+1]=y1;
+            n1=-1;
+        }
+    }
+    
+    
+    
+    
+    for(int i=0; i<26; i++){
+        printf("%c   %c  %d\n",freq[0][i],freq[1][i],freq[2][i]);
+    }
+    
+    int a,b,c;
+    
+    for(int i=0; i<26; i++){
+        calcfreq[i]=freq[1][i];
+    }
+    
+    printf("%s", calcfreq);
     */
     
     

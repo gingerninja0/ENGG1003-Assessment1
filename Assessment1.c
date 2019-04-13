@@ -193,12 +193,14 @@ int main()
         xn=freq[n];
         printf("%d,",xn);
     }
-
+    
+    
+    //////////need to make it so most common letter eg B goes into position E (4)
     /*
     int freq[3][26];
     
     char x[]="RCR VYE BGBX HBNX FHB FXNQBRV YM RNXFH IZNQEBCJ FHB PCJB? C FHYEQHF KYF. CF'J KYF N JFYXV FHB DBRC PYEZR FBZZ VYE. CF'J N JCFH ZBQBKR. RNXFH IZNQEBCJ PNJ N RNXA ZYXR YM FHB JCFH, JY IYPBXMEZ NKR JY PCJB HB LYEZR EJB FHB MYXLB FY CKMZEBKLB FHB OCRCLHZYXCNKJ FY LXBNFB ZCMB… HB HNR JELH N AKYPZBRQB YM FHB RNXA JCRB FHNF HB LYEZR BGBK ABBI FHB YKBJ HB LNXBR NWYEF MXYO RVCKQ. FHB RNXA JCRB YM FHB MYXLB CJ N INFHPNV FY ONKV NWCZCFCBJ JYOB LYKJCRBX FY WB EKKNFEXNZ. HB WBLNOB JY IYPBXMEZ… FHB YKZV FHCKQ HB PNJ NMXNCR YM PNJ ZYJCKQ HCJ IYPBX, PHCLH BGBKFENZZV, YM LYEXJB, HB RCR. EKMYXFEKNFBZV, HB FNEQHF HCJ NIIXBKFCLB BGBXVFHCKQ HB AKBP, FHBK HCJ NIIXBKFCLB ACZZBR HCO CK HCJ JZBBI. CXYKCL. HB LYEZR JNGB YFHBXJ MXYO RBNFH, WEF KYF HCOJBZM.";
-    
+                  //ABCDEFGHIJKLMNOPQRSTUVWXYZ
     char actfreq[]="ETAOINSRHDLUCMFYWGPBVKXQJZ";
     
     char calcfreq[27]="";
@@ -251,12 +253,15 @@ int main()
         printf("%c   %c  %d\n",freq[0][i],freq[1][i],freq[2][i]);
     }
     
-    int a,b,c;
+    int a;
     
     for(int i=0; i<26; i++){
         calcfreq[i]=freq[1][i];
     }
-    
+    for(int i=0; i<26; i++){
+        a=actfreq[i]-65;
+        calcfreq[a]=freq[1][i];
+    }
     printf("%s", calcfreq);
     */
     

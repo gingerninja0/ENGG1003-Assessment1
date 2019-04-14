@@ -28,7 +28,9 @@ void create_substitution_key(char *subkeyen, char *subkeyde);
 
 void decode_substitution(char *x, int k, char *subkeyen, char *subkeyde);
 
-void statistical_analysis(char *x, int k, char *subkeyde);
+void statistical_analysissub(char *x, int k, char *subkeyde);
+
+int statistical_analysisrot(char *x, char *z, int k, int amount);
 
 int main()
 {
@@ -147,7 +149,7 @@ int main()
             break;    
         case 6:
             printf("Decoding message using substitution cypher using statistical analysis\n\n");
-            statistical_analysis(x,k,subkeyen);
+            statistical_analysissub(x,k,subkeyen);
             decode_substitution(x,k,subkeyen,subkeyde);
             printf("\nThe key made is: %s\n\n",subkeyen);
             printf("%s",x);
@@ -159,10 +161,17 @@ int main()
     
     
     
+    
+    
+    
     return 0;
 }
 
-void statistical_analysis(char *x, int k, char *subkeyen){
+int statistical_analysisrot(char *x, char *z, int k, int amount){
+    
+}
+
+void statistical_analysissub(char *x, int k, char *subkeyen){
     int freq[2][26];
     char actfreq[]="ETAOINSRHDLUCMFYWGPBVKXQJZ";
     

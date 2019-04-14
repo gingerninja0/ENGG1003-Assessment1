@@ -28,6 +28,8 @@ void create_substitution_key(char *subkeyen, char *subkeyde);
 
 void decode_substitution(char *x, int k, char *subkeyen, char *subkeyde);
 
+void statistical_analysis(char *x, int k, char *subkeyde);
+
 int main()
 {
     int k=0;//k is the size of the array which is made by checking amount of characters in the input file, if not set to 0 then sometimes does not run
@@ -143,113 +145,28 @@ int main()
             printf("%s",x);
             fprintf(output, "Decoding message using substitution cypher using key: %s\n\nEncoded message:\n%s",subkeyen,x);
             break;    
+        case 6:
+            printf("Decoding message using substitution cypher using statistical analysis\n\n");
+            statistical_analysis(x,k,subkeyen);
+            decode_substitution(x,k,subkeyen,subkeyde);
+            printf("\nThe key made is: %s\n\n",subkeyen);
+            printf("%s",x);
+            fprintf(output, "Decoding message using substitution cypher using statistical analysis used the calculated key: %s\n\nDecoded message:\n%s",subkeyen,x);
+            break;
     }
     fclose(input);
     fclose(output);
     
     
-    printf("\n\n");
     
-    int freq[26];
-   
-    for(int i=0; i<26; i++){
-        freq[i]=0;
+    return 0;
+}
 
-    }
-    
-    int t;
-    for(int i=0; i<k; i++){
-        t=x[i]-65;
-        freq[t]++;
-    }
-    
-    for(int i=0; i<26; i++){
-        printf("%c   %d\n",i+65,freq[i]);
-    }
-    int m=26;
-    int n,n1; 
-    int xn,x1,x2;
-    
-    
-    for(n=0; n<m; n++){
-        xn=freq[n];
-        printf("%d,",xn);
-    }
-    printf("\n\n");
-    
-    
-    
-    for(n1=0; n1<m-1; n1++){
-        x1=freq[n1];
-        x2=freq[n1+1];
-        if(x2>x1){
-            freq[n1]=x2;
-            freq[n1+1]=x1;
-            n1=-1;
-        }
-    }   
-
-    for(n=0; n<m; n++){ 
-        xn=freq[n];
-        printf("%d,",xn);
-    }
-    
-    
-    //////////WIP does not work yet
-    /*
-    #include <stdio.h>
-#include <ctype.h>
-
-void create_substitution_key(char *calcfreq, char *subkeyde);
-
-void decode_substitution(char *x, int k, char *calcfreq, char *subkeyde);
-
-int main()
-{   
-    FILE *list;
-    list=fopen("list.txt", "r");
-    
-    int n=0;
-    char c;
-    
-    while((c=getc(list))!=EOF){
-        n++;
-    }
-    printf("%d\n\n",n);
-    rewind(list);
-    
-    char wlist[n];
-    
-    for(int i=0; i<n; i++){
-        fscanf(list, "%c", &c);
-        //if not at EOF then read character into x
-        if(feof(list)==0){
-            //if the character is a lower case letter, make it upper case and then add to array x 
-            if(islower(c)){
-                c-=32;
-            }
-            wlist[i]=c;
-        }
-        else    {
-            wlist[i]=0; //fills rest of array with 0 when at end of file
-        }
-        
-    }
-    
-    
-    
+void statistical_analysis(char *x, int k, char *subkeyen){
     int freq[2][26];
-    
-    char x[]="RCR VYE BGBX HBNX FHB FXNQBRV YM RNXFH IZNQEBCJ FHB PCJB? C FHYEQHF KYF. CF'J KYF N JFYXV FHB DBRC PYEZR FBZZ VYE. CF'J N JCFH ZBQBKR. RNXFH IZNQEBCJ PNJ N RNXA ZYXR YM FHB JCFH, JY IYPBXMEZ NKR JY PCJB HB LYEZR EJB FHB MYXLB FY CKMZEBKLB FHB OCRCLHZYXCNKJ FY LXBNFB ZCMB… HB HNR JELH N AKYPZBRQB YM FHB RNXA JCRB FHNF HB LYEZR BGBK ABBI FHB YKBJ HB LNXBR NWYEF MXYO RVCKQ. FHB RNXA JCRB YM FHB MYXLB CJ N INFHPNV FY ONKV NWCZCFCBJ JYOB LYKJCRBX FY WB EKKNFEXNZ. HB WBLNOB JY IYPBXMEZ… FHB YKZV FHCKQ HB PNJ NMXNCR YM PNJ ZYJCKQ HCJ IYPBX, PHCLH BGBKFENZZV, YM LYEXJB, HB RCR. EKMYXFEKNFBZV, HB FNEQHF HCJ NIIXBKFCLB BGBXVFHCKQ HB AKBP, FHBK HCJ NIIXBKFCLB ACZZBR HCO CK HCJ JZBBI. CXYKCL. HB LYEZR JNGB YFHBXJ MXYO RBNFH, WEF KYF HCOJBZM.";
-                  //ABCDEFGHIJKLMNOPQRSTUVWXYZ
     char actfreq[]="ETAOINSRHDLUCMFYWGPBVKXQJZ";
     
-    char calcfreq[27]="";
-    char subkeyde[26];
     
-    int k=sizeof(x);
-    
-    char word[21]="";
     
     int t;
     
@@ -298,69 +215,8 @@ int main()
     
     for(int i=0; i<26; i++){
         a=actfreq[i]-65;
-        calcfreq[a]=freq[0][i];
+        subkeyen[a]=freq[0][i];
     }
-    printf("\n%s\n\n", calcfreq);
-    
-    decode_substitution(x,k,calcfreq,subkeyde);
-    
-    printf("%s\n\n",x);
-    
-    int j=0;
-    int l;
-    
-    for(int i=0; i<k; i++){
-        if(isupper(x[i])){
-            word[j]=x[i];
-            j++;
-        }
-        else    {
-            for(l=j; l<20; l++){
-                word[l]=' ';
-            }
-            for(l=0; l<20; l++){
-                
-            }
-            j=0;
-            printf("%s\n",word);
-        }
-    }
-    
-    
-    return 0;
-}
-
-void create_substitution_key(char *calcfreq, char *subkeyde){
-    int l;
-    for(int n=0; n<26; n++){
-        if(isupper(calcfreq[n])){
-            l=calcfreq[n]-65;
-            subkeyde[l]=n+65;
-        }
-    }
-}
-
-void decode_substitution(char *x, int k, char *calcfreq, char *subkeyde){
-    create_substitution_key(calcfreq,subkeyde);
-    int code;
-    for(int n=0; n<k; n++){
-        if(isupper(x[n])){
-            code=x[n]-65;
-            x[n]=subkeyde[code];
-        }
-    }
-}
-
-    */
-    
-    
-    
-    
-    
-    
-    
-    
-    return 0;
 }
 
 void decode_substitution(char *x, int k, char *subkeyen, char *subkeyde){

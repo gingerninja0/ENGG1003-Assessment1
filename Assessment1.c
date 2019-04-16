@@ -131,8 +131,8 @@ int main()
             printf("%s",x);
             fprintf(output, "Decoding message using caesar cypher using key: %d\n\nDecoded message:\n\n%s",key,x);
             break;
-        case 3:
-            printf("Decoding message using caesar cypher, using brute force\n\n");
+        case 3: //need to send to file
+            printf("Decoding message using caesar cypher, using brute force\n");
             decode_caesarwokey(x,z,k); //call decode_caesarwokey() to decode message with out a key being provided
             break;
         case 4:

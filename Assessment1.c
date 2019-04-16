@@ -342,11 +342,11 @@ void decode_caesarwokey(char *x, char *z, int k){
             p++;
         }
     }
-    //printf("\n\n%d\n\n",p);
+    printf("\n\n%d   %d\n\n",p,k);
 
-    char xlist[20][p];
+    char xlist[20][k*k]; //needs to be this big for an unknown reason (should only need to be size p,)
     
-    for(int i=0; i<p; i++){
+    for(int i=0; i<k; i++){
         for(int j=0; j<20; j++){
             xlist[j][i]=0;
         }
@@ -363,7 +363,7 @@ void decode_caesarwokey(char *x, char *z, int k){
         decode_caesarwkey(z,k,key);
         //printf("%s\n\n",z);
         j=0;
-        for(int i=0; j!=p; i++){
+        for(int i=0; j<p; i++){
             c=z[i];
             if(isupper(c)){
                 xlist[o][j]=c;

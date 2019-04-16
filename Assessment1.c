@@ -167,10 +167,6 @@ int main()
     return 0;
 }
 
-int statistical_analysisrot(char *x, char *z, int k, int amount){
-    
-}
-
 void statistical_analysissub(char *x, int k, char *subkeyen){
     int freq[2][26];
     char actfreq[]="ETAOINSRHDLUCMFYWGPBVKXQJZ";
@@ -290,19 +286,144 @@ void decode_caesarwkey(char *x, int k, int key){
     }
 }
 
-/*lists 25 messages each shifted by a different key, finishes at final element k, unless using 
-initialised message, then ky is used to prevent overflow. After each new key, the key is printed and the message is printed using
-print_code(). copies array x using copy_array_xz() into array z each loop so it is not over written*/
 void decode_caesarwokey(char *x, char *z, int k){
-    printf("One of the keys will give the correct output, scroll through 26 outputs until one matches and note the key displayed\n\n");
-    for(int key=1; key<26; key++){
-        copy_array_xz(x,z,k); //creates a copy of array x which is shifted by key, repeats 25 times
-        for(int n=0; n<k; n++){
-            if(isupper(z[n])){
-                z[n]=((26+(z[n]-65)-key)%26)+65;
+    FILE *list;
+    list=fopen("list.txt", "r");
+    
+    int n=0,l=0;
+    char c;
+    
+    while((c=getc(list))!=EOF){
+        if(isspace(c)){
+            n++;
+        }
+        l++;
+    }
+    //printf("%d   %d\n\n",n,l);
+    rewind(list);
+    
+    char wlist[20][n];
+
+    for(int i=0; i<n; i++){
+        for(int j=0; j<20; j++){
+            wlist[j][i]=0;
+        }
+    }
+    
+    int j=0,o=0;;
+    
+    for(int i=0; i<l; i++){
+        fscanf(list, "%c", &c);
+        
+        if(islower(c)){
+            c-=32;
+        }
+        wlist[o][j]=c;
+        o++;
+            
+        if(isspace(c))    {
+            for(int a=o; a<20; a++){
+                wlist[a][j]=0;
+            }
+            j++;
+            o=0;
+        }
+    }
+    for(int i=0; i<n; i++){
+        for(int j=0; j<20; j++){
+            printf("%c",wlist[j][i]);
+        }
+    }
+    int p=0;
+    
+    for(int i=0; i<k; i++){
+        if(isspace(x[i])){
+            p++;
+        }
+    }
+    printf("\n\n%d\n\n",p);
+
+    char xlist[20][p];
+    
+    for(int i=0; i<p; i++){
+        for(int j=0; j<20; j++){
+            xlist[j][i]=0;
+        }
+    }
+    
+    printf("%s\n\n",x);
+    
+    o=0;
+    int keyact,neg,pos;
+    
+    for(int key=0; key<26; key++){
+        //printf("%d\n",key);
+        copy_array_xz(x,z,k);
+        decode_caesarwkey(z,k,key);
+        //printf("%s\n\n",z);
+        j=0;
+        for(int i=0; j!=p; i++){
+            c=z[i];
+            if(isupper(c)){
+                xlist[o][j]=c;
+                o++;
+            }    
+            else {
+                xlist[o][j]=32;
+                j++;
+                o=0;
             }
         }
-        printf("Key %d gives the message:\n",key);
-        printf("%s",z);
+        /*for(int i=0; i<p; i++){
+            for(int j=0; j<20; j++){
+                printf("%c",xlist[j][i]);
+            }
+            printf(" ");
+        }*/
+       
+        for(int b=0; b<p; b++){ 
+            for(int a=0; a<n; a++){
+                pos=0;
+                neg=0;
+                for(int c=0; c<20; c++){
+                    char b1=xlist[c][b];
+                    char a1=wlist[c][a];
+                    if(isupper(b1)){
+                        if(a1!=b1){
+                            neg++;
+                        }
+                        if(a1==b1){
+                            pos++;
+                        }
+                        //printf("%c  ",wlist[c][0]);
+                        //printf("pos=%d   neg=%d\n",pos,neg);
+                    }
+                    
+                }
+                
+                
+                if(pos>2&&neg==0){ //this is length of word in file -1, ie mon which is 2 and everybody which is 8
+                    for(int c=0; c<20; c++){
+                        //printf("%c",xlist[c][a]);
+                    }
+                    printf("key=%d   word is:%d    pos=%d    neg=%d\n",key,a,pos,neg);
+                    keyact=key;
+                    key=26;
+                    b=p;
+                    a=n;
+                    pos=0;
+                    neg=0;
+                    //printf("key is: %d\n",keyact);
+                }
+            }
+        }
+        for(int i=0; i<n; i++){
+            for(int j=0; j<20; j++){
+                xlist[j][i]=0;
+            }
+        }
     }
+    
+    decode_caesarwkey(x,k,keyact);
+    printf("%d\n\n%s",keyact,x);
 }

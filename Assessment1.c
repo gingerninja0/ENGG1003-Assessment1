@@ -329,12 +329,12 @@ void decode_caesarwokey(char *x, char *z, int k){
             o=0;
         }
     }
-    printf("List of words that may be in message:\n");
+    /*printf("List of words that may be in message:\n");
     for(int i=0; i<n; i++){
         for(int j=0; j<20; j++){
             printf("%c",wlist[j][i]);
         }
-    }
+    }*/
     int p=0;
     
     for(int i=0; i<k; i++){

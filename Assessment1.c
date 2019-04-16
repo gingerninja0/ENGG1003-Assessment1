@@ -134,6 +134,7 @@ int main()
         case 3: //need to send to file
             printf("Decoding message using caesar cypher, using brute force\n");
             decode_caesarwokey(x,z,k); //call decode_caesarwokey() to decode message with out a key being provided
+            //need to add printing to file
             break;
         case 4:
             printf("Encoding message using substitution cypher with key: %s\n\n",subkeyen);
@@ -342,9 +343,9 @@ void decode_caesarwokey(char *x, char *z, int k){
             p++;
         }
     }
-    printf("\n\n%d   %d\n\n",p,k);
+    //printf("\n\n%d   %d\n\n",p,k);
 
-    char xlist[20][k*k]; //needs to be this big for an unknown reason (should only need to be size p,)
+    char xlist[20][100*p]; //needs to be this big for an unknown reason (should only need to be size p,) ie does not work with small messages when p
     
     for(int i=0; i<k; i++){
         for(int j=0; j<20; j++){

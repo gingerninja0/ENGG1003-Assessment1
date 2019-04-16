@@ -132,7 +132,7 @@ int main()
             fprintf(output, "Decoding message using caesar cypher using key: %d\n\nDecoded message:\n\n%s",key,x);
             break;
         case 3:
-            printf("Decoding message using brute force\n\n");
+            printf("Decoding message using caesar cypher, using brute force\n\n");
             decode_caesarwokey(x,z,k); //call decode_caesarwokey() to decode message with out a key being provided
             break;
         case 4:
@@ -329,6 +329,7 @@ void decode_caesarwokey(char *x, char *z, int k){
             o=0;
         }
     }
+    printf("List of words that may be in message:\n");
     for(int i=0; i<n; i++){
         for(int j=0; j<20; j++){
             printf("%c",wlist[j][i]);
@@ -341,7 +342,7 @@ void decode_caesarwokey(char *x, char *z, int k){
             p++;
         }
     }
-    printf("\n\n%d\n\n",p);
+    //printf("\n\n%d\n\n",p);
 
     char xlist[20][p];
     
@@ -351,7 +352,7 @@ void decode_caesarwokey(char *x, char *z, int k){
         }
     }
     
-    printf("%s\n\n",x);
+    //printf("%s\n\n",x);
     
     o=0;
     int keyact,neg,pos;
@@ -406,7 +407,7 @@ void decode_caesarwokey(char *x, char *z, int k){
                     for(int c=0; c<20; c++){
                         //printf("%c",xlist[c][a]);
                     }
-                    printf("key=%d   word is:%d    pos=%d    neg=%d\n",key,a,pos,neg);
+                    //printf("key=%d   word is:%d    pos=%d    neg=%d\n",key,a,pos,neg);
                     keyact=key;
                     key=26;
                     b=p;
@@ -425,5 +426,5 @@ void decode_caesarwokey(char *x, char *z, int k){
     }
     
     decode_caesarwkey(x,k,keyact);
-    printf("%d\n\n%s",keyact,x);
+    printf("\n\nKey found was: %d\n\nMessage decoded using this key\n\n%s",keyact,x);
 }

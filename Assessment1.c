@@ -7,9 +7,9 @@
 /*
  * to do list
  * 
- * statistical analysis
- *      find most common letter and assign it E, then second most common letter A, etc
- * 
+ * rotation without key, fix sensitivity so it is not 3, but the minimum word size-1
+ * substitution cypher
+ * comment 
  * 
  */
 
@@ -20,7 +20,7 @@ void encode_caesar(char *x, int k, int key);
 
 void decode_caesarwkey(char *x, int k, int key);
 
-void decode_caesarwokey(char *x, char *z, int k);
+void decode_caesarwokey(char *x, char *z, int k, int *keyr);
 
 void encode_substitution(char *x, int k, char *subrefi);
 
@@ -37,6 +37,7 @@ int main()
     int k=0;//k is the size of the array which is made by checking amount of characters in the input file, if not set to 0 then sometimes does not run
     char c;
     int key,select,i;
+    int keyr[1];
     char subkeyen[27]=""; //if this is not here then it pus an @ at then end of key
     char subkeyde[26]; //used to make string to decode substitution cypher
     
@@ -102,7 +103,8 @@ int main()
   
         }
         else    {
-            x[i]=0; //fills rest of array with 0 when at end of file
+            x[i+1]=' '; //sets i+1 and i+2 to space character, to fill end of array x so there is no non-letters printed
+            x[i+2]=' ';
         }
         
     }
@@ -133,7 +135,9 @@ int main()
             break;
         case 3: //need to send to file
             printf("Decoding message using caesar cypher, using brute force\n");
-            decode_caesarwokey(x,z,k); //call decode_caesarwokey() to decode message with out a key being provided
+            decode_caesarwokey(x,z,k,keyr); //call decode_caesarwokey() to decode message with out a key being provided
+            printf("\nKey found was: %d\n\nMessage decoded using this key\n\n%s",keyr[1],x);
+            fprintf(output, "Decoding message using caesar cypher using key found through brute force, key is: %d\n\nDecoded message:\n%s",keyr[1],x);
             //need to add printing to file
             break;
         case 4:
@@ -159,11 +163,6 @@ int main()
     }
     fclose(input);
     fclose(output);
-    
-    
-    
-    
-    
     
     return 0;
 }
@@ -287,11 +286,11 @@ void decode_caesarwkey(char *x, int k, int key){
     }
 }
 
-void decode_caesarwokey(char *x, char *z, int k){
+void decode_caesarwokey(char *x, char *z, int k,int *keyr){
     FILE *list;
     list=fopen("list.txt", "r");
     
-    int n=0,l=0;
+    int n=0,l=0,keyact;
     char c;
     
     while((c=getc(list))!=EOF){
@@ -356,8 +355,7 @@ void decode_caesarwokey(char *x, char *z, int k){
     //printf("%s\n\n",x);
     
     o=0;
-    int keyact,neg,pos;
-    
+    int neg,pos;
     for(int key=0; key<26; key++){
         //printf("%d\n",key);
         copy_array_xz(x,z,k);
@@ -369,13 +367,14 @@ void decode_caesarwokey(char *x, char *z, int k){
             if(isupper(c)){
                 xlist[o][j]=c;
                 o++;
-            }    
-            else {
+            }
+            else    {
                 xlist[o][j]=32;
                 j++;
                 o=0;
             }
         }
+
         /*for(int i=0; i<p; i++){
             for(int j=0; j<20; j++){
                 printf("%c",xlist[j][i]);
@@ -403,11 +402,10 @@ void decode_caesarwokey(char *x, char *z, int k){
                     
                 }
                 
-                
-                if(pos>2&&neg==0){ //this is length of word in file -1, ie mon which is 2 and everybody which is 8
-                    for(int c=0; c<20; c++){
-                        //printf("%c",xlist[c][a]);
-                    }
+                if(pos>(3)&&neg==0){ //try t replace the '3' with the minimum word size maybe if there is only one word then size-1, else size, do this by counting spaces?
+                    /*for(int c=0; c<20; c++){
+                        printf("%c",xlist[c][a]);
+                    }*/
                     //printf("key=%d   word is:%d    pos=%d    neg=%d\n",key,a,pos,neg);
                     keyact=key;
                     key=26;
@@ -425,7 +423,6 @@ void decode_caesarwokey(char *x, char *z, int k){
             }
         }
     }
-    
+    keyr[1]=keyact;
     decode_caesarwkey(x,k,keyact);
-    printf("\n\nKey found was: %d\n\nMessage decoded using this key\n\n%s",keyact,x);
 }

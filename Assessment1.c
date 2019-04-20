@@ -32,7 +32,7 @@ void decode_substitutionwokey(char *x, int k, char *z, char *calcfreq, char *sub
 
 int main()
 {
-    int k=0;//k is the size of the array which is made by checking amount of characters in the input file, if not set to 0 then sometimes does not run
+    int k=10; //k is the size of the array which is made by checking amount of characters in the input file, if not set to 0 then sometimes does not run
     char c;
     int key,select,i;
     int keyr[1];
@@ -67,9 +67,9 @@ int main()
     }
     rewind(input); //resets to start of file after reading size
     
-    char x[k]; 
+    char x[k];
     
-    //used to find where to set file pointer, delete before upload/////////////////////////////////////////
+    //used to find where to set file pointer, delete before upload/////////////////////////////////////////////////////////////////////////////////////////
     /*int isel=0;
     int position=0;
     
@@ -112,10 +112,13 @@ int main()
             x[i]=c;
   
         }
+        //fills up extra chars in x[] to null to prevent unwanted characters being printed
         else    {
-            x[i]=' '; //sets i+1 to fill end of array x so there is no non-letters printed
+            while(i<k){
+                x[i]=0;
+                i++;
+            }
         }
-        
     }
 
     printf("Message from file\n\n%s\n\n",x); //prints the message after being read and converted to upper case
@@ -131,7 +134,7 @@ int main()
 
     //prints selected cypher and key in different ways depending one selection
     
-    //make sure printing is consistent, consistent spaceing etc//////////////////////////////////////////////////////////////////////
+    //make sure printing is consistent, consistent spaceing etc//////////////////////////////////////////////////////////////////////////////////////////////////////
     switch(select){
         case 1:
             printf("Encoding message using caesar cypher using key: %d\n\n",key);
@@ -146,10 +149,10 @@ int main()
             fprintf(output, "Decoding message using caesar cypher using key: %d\n\nDecoded message:\n\n%s",key,x);
             break;
         case 3: //need to send to file
-            printf("Decoding message using caesar cypher, using brute force\n");
+            printf("Decoding message using caesar cypher, using spell checker\n");
             decode_caesarwokey(x,z,k,keyr); //call decode_caesarwokey() to decode message with out a key being provided
             printf("\nKey found was: %d\n\nMessage decoded using this key\n\n%s",keyr[1],x);
-            fprintf(output, "Decoding message using caesar cypher using key found through brute force, key is: %d\n\nDecoded message:\n\n%s",keyr[1],x);
+            fprintf(output, "Decoding message using caesar cypher using key found through spell checking, key is: %d\n\nDecoded message:\n\n%s",keyr[1],x);
             //need to add printing to file
             break;
         case 4:
@@ -319,24 +322,25 @@ void decode_caesarwokey(char *x, char *z, int k,int *keyr){
             for(int a=0; a<n; a++){
                 pos=0;
                 neg=0;
+            
                 for(int c=0; c<20; c++){
                     char b1=xlist[c][b];
                     char a1=wlist[c][a];
                     if(isupper(b1)&&isupper(a1)){
                         if(a1!=b1){
                             neg++;
-                        }
+                            }
                         if(a1==b1){
                             pos++;
-                        }
+                        } 
                     }
                     else if(isupper(b1)||isupper(a1)){
                         neg+=20;
                     }
-                    
                 }
                 
-                if(pos>neg&&neg==0){
+                if(pos>neg && neg==0){
+                    printf("%d   %d\n\n",pos,neg);
                     keyact=key;
                     key=26;
                     b=p;
@@ -344,11 +348,6 @@ void decode_caesarwokey(char *x, char *z, int k,int *keyr){
                     pos=0;
                     neg=0;
                 }
-            }
-        }
-        for(int i=0; i<n; i++){
-            for(int j=0; j<20; j++){
-                xlist[j][i]=0;
             }
         }
     }
@@ -469,7 +468,6 @@ void decode_substitutionwokey(char *x, int k, char *z, char *calcfreq, char *sub
             freq[0][t]=x[i];
             freq[1][t]++; 
         }
-        
     }
     
     for(n1=0; n1<m-1; n1++){
@@ -558,7 +556,6 @@ void decode_substitutionwokey(char *x, int k, char *z, char *calcfreq, char *sub
                 else if(isupper(b1)||isupper(a1)){
                     neg+=20;
                 }
-                
             }
 
             if(((float)pos/neg)>=2){
@@ -595,7 +592,6 @@ void decode_substitutionwokey(char *x, int k, char *z, char *calcfreq, char *sub
                 a=n;
             }
         }
-
     } 
     
     decode_substitution(x,k,calcfreq,subkeyde);

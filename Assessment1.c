@@ -1,17 +1,7 @@
 #include <stdio.h>
 #include <ctype.h>
 
-/*INCLUDE SHORT FUNCTION FUNCTIONALITY HERE*/
-
-
-/*
- * to do list
- * 
- * rotation without key, fix sensitivity so it is not 3, but the minimum word size-1
- * substitution cypher
- * comment 
- * 
- */
+/*INCLUDE HIGH LEVEL FUNCTIONALITY OF PROGRAM HERE INCLUDING STUDENT ID AND PROJECT NAME*/
 
 void copy_array_xz(char *x, char *z, int k);
 
@@ -27,10 +17,6 @@ void create_substitution_key(char *subkeyen, char *subkeyde);
 
 void decode_substitution(char *x, int k, char *subkeyen, char *subkeyde);
 
-void statistical_analysissub(char *x, int k, char *subkeyde);
-
-int statistical_analysisrot(char *x, char *z, int k, int amount);
-
 void create_substitution_keywgkey(char *calcfreq, char *subkeyde);
 
 void decode_substitutionwgkey(char *x, int k, char *calcfreq, char *subkeyde);
@@ -45,20 +31,10 @@ int main()
     char c;
     int key,select,i;
     int keyr[1];
-    char subkeyen[27]=""; //if this is not here then it pus an @ at then end of key
-    char subkeyde[26]; //used to make string to decode substitution cypher
+    char subkeyen[27]=""; 
+    char subkeyde[26];
     char calcfreq[27]="";
-    /*
-     * the file Input layout is:
-     * 
-     * mode
-     * key
-     * message to encode/decode (last character must be a space)
-     * 
-     */
-    
-    //File io from 51 to 108
-    
+
     FILE *input;
     FILE *setup;
     FILE *output;
@@ -80,7 +56,7 @@ int main()
         return 0;
     }
     
-    //while not at EOF add to k+1 which is size of file
+    //while not at EOF k++ which is size of file, and therefore message
     while((c=getc(input))!=EOF){
         k++;
     }
@@ -99,15 +75,14 @@ int main()
     printf("\n\n%d\n\n",position);*/
     
     fseek(setup, 387, SEEK_SET );
-    
-    
+        
     fscanf(setup, "%d", &select);
     
     fseek(setup, 405, SEEK_SET );
     
     i=0;
     
-    if(select<=3){
+    if(select<3){
         fscanf(setup, "%d", &key);
     }
     else if(select!=3 && select!=6){
@@ -133,7 +108,7 @@ int main()
   
         }
         else    {
-            x[i]=' '; //sets i+1  to fill end of array x so there is no non-letters printed
+            x[i]=' '; //sets i+1 to fill end of array x so there is no non-letters printed
         }
         
     }
@@ -150,37 +125,39 @@ int main()
     char z[k];
 
     //prints selected cypher and key in different ways depending one selection
+    
+    //make sure printing is consistent, consistent spaceing etc//////////////////////////////////////////////////////////////////////
     switch(select){
         case 1:
             printf("Encoding message using caesar cypher using key: %d\n\n",key);
             encode_caesar(x,k,key); //call encode_caesar()
             printf("%s",x);
-            fprintf(output, "Encoding message using caesar cypher using key: %d\n\nEncoded message:\n%s",key,x);
+            fprintf(output, "Encoding message using caesar cypher using key: %d\n\nEncoded message:\n\n%s",key,x);
             break;
         case 2:
             printf("Decoding message using caesar cypher using key %d\n\n",key);
             decode_caesarwkey(x,k,key); //call caesar decode_caesarwkey()
             printf("%s",x);
-            fprintf(output, "Decoding message using caesar cypher using key: %d\n\nDecoded message:\n%s",key,x);
+            fprintf(output, "Decoding message using caesar cypher using key: %d\n\nDecoded message:\n\n%s",key,x);
             break;
         case 3: //need to send to file
             printf("Decoding message using caesar cypher, using brute force\n");
             decode_caesarwokey(x,z,k,keyr); //call decode_caesarwokey() to decode message with out a key being provided
             printf("\nKey found was: %d\n\nMessage decoded using this key\n\n%s",keyr[1],x);
-            fprintf(output, "Decoding message using caesar cypher using key found through brute force, key is: %d\n\nDecoded message:\n%s",keyr[1],x);
+            fprintf(output, "Decoding message using caesar cypher using key found through brute force, key is: %d\n\nDecoded message:\n\n%s",keyr[1],x);
             //need to add printing to file
             break;
         case 4:
             printf("Encoding message using substitution cypher with key: %s\n\n",subkeyen);
             encode_substitution(x,k,subkeyen);
             printf("%s",x);
-            fprintf(output, "Encoding message using substitution cypher using key: %s\n\nEncoded message:\n%s",subkeyen,x);
+            fprintf(output, "Encoding message using substitution cypher using key: %s\n\nEncoded message:\n\n%s",subkeyen,x);
             break;
         case 5:
             printf("Decoding message using substitution cypher using substitution key: %s\n\n",subkeyen);
             decode_substitution(x,k,subkeyen,subkeyde);
             printf("%s",x);
-            fprintf(output, "Decoding message using substitution cypher using key: %s\n\nEncoded message:\n%s",subkeyen,x);
+            fprintf(output, "Decoding message using substitution cypher using key: %s\n\nEncoded message:\n\n%s",subkeyen,x);
             break;    
         case 6:
             //this prints within the function as it is complex and it difficult to print everything in the correct order
@@ -195,63 +172,6 @@ int main()
     fclose(output);
     
     return 0;
-}
-
-void statistical_analysissub(char *x, int k, char *subkeyen){
-    int freq[2][26];
-    char actfreq[]="ETAOINSRHDLUCMFYWGPBVKXQJZ";
-    
-    
-    
-    int t;
-    
-    int m=26;
-    int n1; 
-    int x1,x2;
-    int y1,y2;
-    
-    
-    for(int i=0; i<26; i++){
-        freq[0][i]=i+65;
-        freq[1][i]=0;
-    }
-    
-    for(int i=0; i<k; i++){
-        if(isupper(x[i])){
-            t=x[i]-65;
-            freq[0][t]=x[i];
-            freq[1][t]++; 
-        }
-        
-    }
-    
-    for(n1=0; n1<m-1; n1++){
-        x1=freq[1][n1];
-        y1=freq[0][n1];
-        x2=freq[1][n1+1];
-        y2=freq[0][n1+1];
-        if(x2>x1){
-            freq[1][n1]=x2;
-            freq[0][n1]=y2;
-            freq[1][n1+1]=x1;
-            freq[0][n1+1]=y1;
-            n1=-1;
-        }
-    }
-    
-    
-    
-    
-    for(int i=0; i<26; i++){
-        printf("%c  %d\n",freq[0][i],freq[1][i]);
-    }
-    
-    int a;
-    
-    for(int i=0; i<26; i++){
-        a=actfreq[i]-65;
-        subkeyen[a]=freq[0][i];
-    }
 }
 
 void decode_substitution(char *x, int k, char *subkeyen, char *subkeyde){
@@ -325,7 +245,6 @@ void decode_caesarwokey(char *x, char *z, int k,int *keyr){
         }
         l++;
     }
-    //printf("%d   %d\n\n",n,l);
     rewind(list);
     
     char wlist[20][n];
@@ -355,12 +274,7 @@ void decode_caesarwokey(char *x, char *z, int k,int *keyr){
             o=0;
         }
     }
-    /*printf("List of words that may be in message:\n");
-    for(int i=0; i<n; i++){
-        for(int j=0; j<20; j++){
-            printf("%c",wlist[j][i]);
-        }
-    }*/
+
     int p=0;
     
     for(int i=0; i<k; i++){
@@ -368,7 +282,6 @@ void decode_caesarwokey(char *x, char *z, int k,int *keyr){
             p++;
         }
     }
-    //printf("\n\n%d   %d\n\n",p,k);
 
     char xlist[20][100*p]; //needs to be this big for an unknown reason (should only need to be size p,) ie does not work with small messages when p
     
@@ -378,15 +291,11 @@ void decode_caesarwokey(char *x, char *z, int k,int *keyr){
         }
     }
     
-    //printf("%s\n\n",x);
-    
     o=0;
     int neg,pos;
     for(int key=0; key<26; key++){
-        //printf("%d\n",key);
         copy_array_xz(x,z,k);
         decode_caesarwkey(z,k,key);
-        //printf("%s\n\n",z);
         j=0;
         for(int i=0; j<p; i++){
             c=z[i];
@@ -400,13 +309,6 @@ void decode_caesarwokey(char *x, char *z, int k,int *keyr){
                 o=0;
             }
         }
-
-        /*for(int i=0; i<p; i++){
-            for(int j=0; j<20; j++){
-                printf("%c",xlist[j][i]);
-            }
-            printf(" ");
-        }*/
        
         for(int b=0; b<p; b++){ 
             for(int a=0; a<n; a++){
@@ -422,28 +324,20 @@ void decode_caesarwokey(char *x, char *z, int k,int *keyr){
                         if(a1==b1){
                             pos++;
                         }
-                        //printf("%c  ",wlist[c][0]);
-                        //printf("pos=%d   neg=%d\n",pos,neg);
                     }
-                    //if this bit doesn't work then check pos>neg to pos>3
                     else if(isupper(b1)||isupper(a1)){
                         neg+=20;
                     }
                     
                 }
                 
-                if(pos>neg&&neg==0){ //try t replace the '3' with the minimum word size maybe if there is only one word then size-1, else size, do this by counting spaces?
-                    /*for(int c=0; c<20; c++){
-                        printf("%c",xlist[c][a]);
-                    }*/
-                    //printf("key=%d   word is:%d    pos=%d    neg=%d\n",key,a,pos,neg);
+                if(pos>neg&&neg==0){
                     keyact=key;
                     key=26;
                     b=p;
                     a=n;
                     pos=0;
                     neg=0;
-                    //printf("key is: %d\n",keyact);
                 }
             }
         }
@@ -587,8 +481,8 @@ void decode_substitutionwokey(char *x, int k, char *z, char *calcfreq, char *sub
         }
     }
     
-    printf("Frequency of letters in message:\n");
-    fprintf(output, "Frequency of letters in message:\n");
+    printf("Frequency of letters in: English followed by message:\n");
+    fprintf(output, "Frequency of letters in: English followed by message:\n");
     
     for(int i=0; i<26; i++){
         printf("%c   %c  %d\n",actfreq[i],freq[0][i],freq[1][i]);
@@ -605,12 +499,12 @@ void decode_substitutionwokey(char *x, int k, char *z, char *calcfreq, char *sub
     copy_array_xz(x,z,k);
     
     printf("\nKey calculated from statistical analysis: %s\n\n", calcfreq);
-    fprintf(output, "\nKey calculated from statistical analysis: %s\n\n", calcfreq);
+    fprintf(output, "\n\nKey calculated from statistical analysis: %s\n\n", calcfreq);
     
     decode_substitutionz(z,k,calcfreq,subkeyde);
 
     printf("Message decoded using this key\n\n%s\n\n\n",z);
-    fprintf(output, "Message decoded using this key\n%s\n\n\n",z);
+    fprintf(output, "Message decoded using this key\n\n%s\n\n\n",z);
     
     j=0;
     for(int i=0; i!=k; i++){
@@ -704,5 +598,5 @@ void decode_substitutionwokey(char *x, int k, char *z, char *calcfreq, char *sub
     fprintf(output, "Key calculated using spell checker: %s\n\n",calcfreq);
     
     printf("Message decoded using this new key\n\n%s",x);
-    fprintf(output, "Message decoded using this new key\n%s",x);
+    fprintf(output, "Message decoded using this new key\n\n%s",x);
 }

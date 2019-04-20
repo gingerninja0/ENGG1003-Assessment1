@@ -25,6 +25,11 @@ void decode_substitutionz(char *z, int k, char *calcfreq, char *subkeyde);
 
 void decode_substitutionwokey(char *x, int k, char *z, char *calcfreq, char *subkeyde, FILE *output);
 
+/*
+ * TO DO LIST
+ * fix decode_caesarwokey, able to decode long messages but not short ones, maybe copy checker from substitution cipher
+ */
+
 int main()
 {
     int k=0;//k is the size of the array which is made by checking amount of characters in the input file, if not set to 0 then sometimes does not run
@@ -317,7 +322,7 @@ void decode_caesarwokey(char *x, char *z, int k,int *keyr){
                 for(int c=0; c<20; c++){
                     char b1=xlist[c][b];
                     char a1=wlist[c][a];
-                    if(isupper(b1)){
+                    if(isupper(b1)&&isupper(a1)){
                         if(a1!=b1){
                             neg++;
                         }

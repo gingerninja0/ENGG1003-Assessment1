@@ -32,6 +32,14 @@ void statistical_analysissub(char *x, int k, char *subkeyde);
 
 int statistical_analysisrot(char *x, char *z, int k, int amount);
 
+void create_substitution_keywgkey(char *calcfreq, char *subkeyde);
+
+void decode_substitutionwgkey(char *x, int k, char *calcfreq, char *subkeyde);
+
+void decode_substitutionz(char *z, int k, char *calcfreq, char *subkeyde);
+
+void decode_substitutionwokey(char *x, int k, char *z, char *calcfreq, char *subkeyde, FILE *output);
+
 int main()
 {
     int k=0;//k is the size of the array which is made by checking amount of characters in the input file, if not set to 0 then sometimes does not run
@@ -40,7 +48,7 @@ int main()
     int keyr[1];
     char subkeyen[27]=""; //if this is not here then it pus an @ at then end of key
     char subkeyde[26]; //used to make string to decode substitution cypher
-    
+    char calcfreq[27]="";
     /*
      * the file Input layout is:
      * 
@@ -53,13 +61,19 @@ int main()
     //File io from 51 to 108
     
     FILE *input;
+    FILE *setup;
     FILE *output;
     
     input=fopen("input.txt", "r");
+    setup=fopen("setup.txt", "r");
     output=fopen("output.txt","w");
     
     if(input==NULL){
         perror("Input fopen()");
+        return 0;
+    }
+    if(setup==NULL){
+        perror("setup fopen()");
         return 0;
     }
     if(output==NULL){
@@ -75,14 +89,16 @@ int main()
     
     char x[k]; //makes array slightly larger than required so it is more efficient
     
-    fscanf(input, "%d", &select);
+    fscanf(setup, "%d", &select);
+    
+    i=0;
     
     if(select<=3){
-        fscanf(input, "%d", &key);
+        fscanf(setup, "%d", &key);
     }
     else    {
         while(i<26){
-            fscanf(input, "%c", &c);
+            fscanf(setup, "%c", &c);
             if(isupper(c)){
                 subkeyen[i]=c;
                 i++;
@@ -103,20 +119,20 @@ int main()
   
         }
         else    {
-            x[i+1]=' '; //sets i+1 and i+2 to space character, to fill end of array x so there is no non-letters printed
-            x[i+2]=' ';
+            x[i]=' '; //sets i+1 and i+2 to space character, to fill end of array x so there is no non-letters printed
         }
         
     }
 
     printf("Message from file\n\n%s\n\n",x); //prints the message after being read and converted to upper case
+    fprintf(output, "Message from file:\n\n%s\n\n",x);
     
     //                 abcdefghijklmnopqrstuvwxyz   the alphabet
     //char subkeyen[]="ZEBRASCDFGHIJYKLMNOPQTUVWX"; //reference list for substitution encoder/decode
     
     
     
-    //array used to compare to x in brute force decoding of caesar cypher probably not needed anymore
+
     char z[k];
 
     //prints selected cypher and key in different ways depending one selection
@@ -125,13 +141,13 @@ int main()
             printf("Encoding message using caesar cypher using key: %d\n\n",key);
             encode_caesar(x,k,key); //call encode_caesar()
             printf("%s",x);
-            fprintf(output, "Encoding message using caesar cypher using key: %d\n\nEncoded message:\n\n%s",key,x);
+            fprintf(output, "Encoding message using caesar cypher using key: %d\n\nEncoded message:\n%s",key,x);
             break;
         case 2:
             printf("Decoding message using caesar cypher using key %d\n\n",key);
             decode_caesarwkey(x,k,key); //call caesar decode_caesarwkey()
             printf("%s",x);
-            fprintf(output, "Decoding message using caesar cypher using key: %d\n\nDecoded message:\n\n%s",key,x);
+            fprintf(output, "Decoding message using caesar cypher using key: %d\n\nDecoded message:\n%s",key,x);
             break;
         case 3: //need to send to file
             printf("Decoding message using caesar cypher, using brute force\n");
@@ -153,15 +169,14 @@ int main()
             fprintf(output, "Decoding message using substitution cypher using key: %s\n\nEncoded message:\n%s",subkeyen,x);
             break;    
         case 6:
+            //this prints within the function as it is complex and it difficult to print everything in the correct order
+            //writing to file is also done within the function to reduce complexity
             printf("Decoding message using substitution cypher using statistical analysis\n\n");
-            statistical_analysissub(x,k,subkeyen);
-            decode_substitution(x,k,subkeyen,subkeyde);
-            printf("\nThe key made is: %s\n\n",subkeyen);
-            printf("%s",x);
-            fprintf(output, "Decoding message using substitution cypher using statistical analysis used the calculated key: %s\n\nDecoded message:\n%s",subkeyen,x);
+            decode_substitutionwokey(x,k,z,calcfreq,subkeyde,output);
             break;
     }
     fclose(input);
+    fclose(setup);
     fclose(output);
     
     return 0;
@@ -249,10 +264,6 @@ void encode_substitution(char *x, int k, char *subkeyen){
 void copy_array_xz(char *x, char *z, int k){
     for(int i=0; i<k; i++){
         z[i]=x[i]; //copies element x[i] into element z[i]
-        //is the char is lower case then it is converted to upper case
-        if(islower(x[i])){
-            x[i]-=32;
-        }
     }
 }
 
@@ -399,10 +410,14 @@ void decode_caesarwokey(char *x, char *z, int k,int *keyr){
                         //printf("%c  ",wlist[c][0]);
                         //printf("pos=%d   neg=%d\n",pos,neg);
                     }
+                    //if this bit doesn't work then check pos>neg to pos>3
+                    else if(isupper(b1)||isupper(a1)){
+                        neg+=20;
+                    }
                     
                 }
                 
-                if(pos>(3)&&neg==0){ //try t replace the '3' with the minimum word size maybe if there is only one word then size-1, else size, do this by counting spaces?
+                if(pos>neg&&neg==0){ //try t replace the '3' with the minimum word size maybe if there is only one word then size-1, else size, do this by counting spaces?
                     /*for(int c=0; c<20; c++){
                         printf("%c",xlist[c][a]);
                     }*/
@@ -423,6 +438,261 @@ void decode_caesarwokey(char *x, char *z, int k,int *keyr){
             }
         }
     }
-    keyr[1]=keyact;
+    keyr[1]=keyact; //fix this so it prints correct key (test a <=>26)
     decode_caesarwkey(x,k,keyact);
 }
+
+void create_substitution_keywgkey(char *calcfreq, char *subkeyde){
+    int l;
+    for(int n=0; n<26; n++){
+        if(isupper(calcfreq[n])){
+            l=calcfreq[n]-65;
+            subkeyde[l]=n+65;
+        }
+    }
+}
+void decode_substitutionwgkey(char *x, int k, char *calcfreq, char *subkeyde){
+    create_substitution_key(calcfreq,subkeyde);
+    int code;
+    for(int n=0; n<k; n++){
+        if(isupper(x[n])){
+            code=x[n]-65;
+            x[n]=subkeyde[code];
+        }
+    }
+}
+
+void decode_substitutionz(char *z, int k, char *calcfreq, char *subkeyde){
+    create_substitution_key(calcfreq,subkeyde);
+    int code;
+    for(int n=0; n<k; n++){
+        if(isupper(z[n])){
+            code=z[n]-65;
+            z[n]=subkeyde[code];
+        }
+    }
+}
+
+void decode_substitutionwokey(char *x, int k, char *z, char *calcfreq, char *subkeyde, FILE *output){
+                  //ABCDEFGHIJKLMNOPQRSTUVWXYZ
+    char actfreq[]="ETAOINSRHDLUCMWFGYPBVKJXQZ";
+
+    FILE *list;
+    list=fopen("list.txt", "r");
+    
+    int n=0,l=0;
+    char c;
+    
+    while((c=getc(list))!=EOF){
+        if(isspace(c)){
+            n++;
+        }
+        l++;
+    }
+    rewind(list);
+    
+    char wlist[20][n];
+
+    for(int i=0; i<n; i++){
+        for(int j=0; j<20; j++){
+            wlist[j][i]=0;
+        }
+    }
+    
+    int j=0,o=0;;
+    
+    for(int i=0; i<l; i++){
+        fscanf(list, "%c", &c);
+        
+        if(islower(c)){
+            c-=32;
+        }
+        wlist[o][j]=c;
+        o++;
+            
+        if(isspace(c))    {
+            for(int a=o; a<20; a++){
+                wlist[a][j]=0;
+            }
+            j++;
+            o=0;
+        }
+    }
+
+    int p=10;
+    
+    for(int i=0; i<k; i++){
+        if(isspace(x[i])||ispunct(x[i])){
+            p++;
+        }
+    }
+
+    char xlist[20][100*p];
+    
+    for(int i=0; i<k; i++){
+        for(int j=0; j<20; j++){
+            xlist[j][i]=0;
+        }
+    }
+    int freq[2][26];
+        
+    int t;
+    
+    int m=26;
+    int n1; 
+    int x1,x2;
+    int y1,y2;
+    
+    
+    for(int i=0; i<26; i++){
+        freq[0][i]=i+65;
+        freq[1][i]=0;
+    }
+    
+    for(int i=0; i<k; i++){
+        if(isupper(x[i])){
+            t=x[i]-65;
+            freq[0][t]=x[i];
+            freq[1][t]++; 
+        }
+        
+    }
+    
+    for(n1=0; n1<m-1; n1++){
+        x1=freq[1][n1];
+        y1=freq[0][n1];
+        x2=freq[1][n1+1];
+        y2=freq[0][n1+1];
+        if(x2>x1){
+            freq[1][n1]=x2;
+            freq[0][n1]=y2;
+            freq[1][n1+1]=x1;
+            freq[0][n1+1]=y1;
+            n1=-1;
+        }
+    }
+    
+    printf("Frequency of letters in message:\n");
+    fprintf(output, "Frequency of letters in message:\n");
+    
+    for(int i=0; i<26; i++){
+        printf("%c  %d\n",freq[0][i],freq[1][i]);
+    }
+    for(int i=0; i<26; i++){
+        fprintf(output, "%c  %d\n",freq[0][i],freq[1][i]);
+    }
+    
+    int a;
+    
+    for(int i=0; i<26; i++){
+        a=actfreq[i]-65;
+        calcfreq[a]=freq[0][i];
+    }
+    
+    copy_array_xz(x,z,k);
+    
+    printf("\nKey calculated from statistical analysis: %s\n\n", calcfreq);
+    fprintf(output, "\nKey calculated from statistical analysis: %s\n\n", calcfreq);
+    
+    decode_substitutionz(z,k,calcfreq,subkeyde);
+
+    printf("Message decoded using this key\n\n%s\n\n\n",z);
+    fprintf(output, "Message decoded using this key\n%s\n\n\n",z);
+    
+    j=0;
+    for(int i=0; i!=k; i++){
+        c=z[i];
+        if(isupper(c)||ispunct(c)){
+            xlist[o][j]=c;
+            o++;
+        }    
+        else {
+            xlist[o][j]=0;
+            j++;
+            o=0;
+        }
+    }
+    
+    int calcheck[27];
+    
+    for(int i=0; i<27; i++){
+        calcheck[i]=0;
+    }
+    
+    
+    int pos,neg;
+    int as,bs;
+    int ac,bc;
+    int ai,bi;
+    
+    /*spell checker*/
+    
+    for(int b=0; b<p; b++){
+        for(int a=0; a<n; a++){
+            pos=0;
+            neg=0;
+            
+            for(int c=0; c<20; c++){
+                char b1=xlist[c][b];
+                char a1=wlist[c][a];
+                if(isupper(b1)&&isupper(a1)){
+                   if(a1!=b1){
+                        neg++;
+                    }
+                    if(a1==b1){
+                        pos++;
+                    } 
+                }
+                else if(isupper(b1)||isupper(a1)){
+                    neg+=20;
+                }
+                
+            }
+
+            if(((float)pos/neg)>=1.3){
+                for(int c=0; c<20; c++){
+                    if(isupper(xlist[c][b])&&isupper(wlist[c][a])){
+                        bs=xlist[c][b];
+                        as=wlist[c][a];
+                        ac=as-65; //what it should be
+                        bc=bs-65; //what it is
+                        
+                        if(calcheck[ac]==0 && calcheck[bc]==0){
+                            ai=calcfreq[ac];
+                            bi=calcfreq[bc];
+                            calcfreq[ac]=bi;
+                            calcfreq[bc]=ai;
+                            calcheck[ac]=1;
+                        }
+                    }
+                }
+                copy_array_xz(x,z,k);
+                decode_substitutionz(z,k,calcfreq,subkeyde);
+                for(int i=0; i!=k; i++){
+                    c=z[i];
+                    if(isupper(c)||ispunct(c)){
+                        xlist[o][j]=c;
+                        o++;
+                    }    
+                    else {
+                        xlist[o][j]=0;
+                        j++;
+                        o=0;
+                    }
+                }
+                a=n;
+            }
+        }
+
+    } 
+    
+    decode_substitution(x,k,calcfreq,subkeyde);
+    printf("Key calculated using spell checker: %s\n\n",calcfreq);
+    fprintf(output, "Key calculated using spell checker: %s\n\n",calcfreq);
+    
+    printf("Message decoded using this new key\n\n%s",x);
+    fprintf(output, "Message decoded using this new key\n%s",x);
+
+
+}
+

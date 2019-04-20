@@ -729,8 +729,6 @@ finally
 foreign
 forward
 general
-herself
-himself
 history
 however
 hundred
@@ -980,3 +978,4 @@ responsibility
 plagueis
 carbonite
 stormtrooper
+jedi

@@ -172,6 +172,7 @@ int main()
             //this prints within the function as it is complex and it difficult to print everything in the correct order
             //writing to file is also done within the function to reduce complexity
             printf("Decoding message using substitution cypher using statistical analysis\n\n");
+            fprintf(output, "Decoding message using substitution cypher using statistical analysis\n\n");
             decode_substitutionwokey(x,k,z,calcfreq,subkeyde,output);
             break;
     }
@@ -475,7 +476,7 @@ void decode_substitutionz(char *z, int k, char *calcfreq, char *subkeyde){
 
 void decode_substitutionwokey(char *x, int k, char *z, char *calcfreq, char *subkeyde, FILE *output){
                   //ABCDEFGHIJKLMNOPQRSTUVWXYZ
-    char actfreq[]="ETAOINSRHDLUCMWFGYPBVKJXQZ";
+    char actfreq[]="ETAOINSRHDLUCMWFGYPBVKXJQZ";
 
     FILE *list;
     list=fopen("list.txt", "r");
@@ -576,10 +577,8 @@ void decode_substitutionwokey(char *x, int k, char *z, char *calcfreq, char *sub
     fprintf(output, "Frequency of letters in message:\n");
     
     for(int i=0; i<26; i++){
-        printf("%c  %d\n",freq[0][i],freq[1][i]);
-    }
-    for(int i=0; i<26; i++){
-        fprintf(output, "%c  %d\n",freq[0][i],freq[1][i]);
+        printf("%c   %c  %d\n",actfreq[i],freq[0][i],freq[1][i]);
+        fprintf(output, "%c   %c  %d\n",actfreq[i],freq[0][i],freq[1][i]);
     }
     
     int a;
@@ -692,7 +691,4 @@ void decode_substitutionwokey(char *x, int k, char *z, char *calcfreq, char *sub
     
     printf("Message decoded using this new key\n\n%s",x);
     fprintf(output, "Message decoded using this new key\n%s",x);
-
-
 }
-

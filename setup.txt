@@ -1,2 +1,21 @@
-6
-QWERTYUIOPASDFGHJKLZXCVBNM
+Mode select
+
+Rotation Modes
+1: Encode using rotation cipher with a chosen key
+2: Decode using rotation cipher with a known key
+3: Decode using rotation cipher with an unknown key
+
+Substitution Modes
+4: Encode using substitution cipher with a chosen key
+5: Decode using substitution cipher with a known key
+6: Decode using substitution cipher with an unknown key
+
+Select mode: 6
+
+Select key: QWERTYUIOPASDFGHJKLZXCVBNM
+
+NOTES 
+    Ensure key is correct for mode selected
+    Key does not need to be inputed for mode 3 and 6
+    In input.txt, message starts at start of line, message must only be on line 1
+    In output.txt, message from input.txt is printed, then follow resulting message is printed, other information is also printed and this is described when it occurs 

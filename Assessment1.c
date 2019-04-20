@@ -13,7 +13,6 @@
  * 
  */
 
-
 void copy_array_xz(char *x, char *z, int k);
 
 void encode_caesar(char *x, int k, int key);
@@ -87,16 +86,31 @@ int main()
     }
     rewind(input); //resets to start of file after reading size
     
-    char x[k]; //makes array slightly larger than required so it is more efficient
+    char x[k]; 
+    
+    //used to find where to set file pointer, delete before upload/////////////////////////////////////////
+    /*int isel=0;
+    int position=0;
+    
+    while((c=getc(setup))!=EOF){
+        position++;
+    }
+    rewind(input);
+    printf("\n\n%d\n\n",position);*/
+    
+    fseek(setup, 387, SEEK_SET );
+    
     
     fscanf(setup, "%d", &select);
+    
+    fseek(setup, 405, SEEK_SET );
     
     i=0;
     
     if(select<=3){
         fscanf(setup, "%d", &key);
     }
-    else    {
+    else if(select!=3 && select!=6){
         while(i<26){
             fscanf(setup, "%c", &c);
             if(isupper(c)){
@@ -119,7 +133,7 @@ int main()
   
         }
         else    {
-            x[i]=' '; //sets i+1 and i+2 to space character, to fill end of array x so there is no non-letters printed
+            x[i]=' '; //sets i+1  to fill end of array x so there is no non-letters printed
         }
         
     }
@@ -648,7 +662,7 @@ void decode_substitutionwokey(char *x, int k, char *z, char *calcfreq, char *sub
                 
             }
 
-            if(((float)pos/neg)>=1.3){
+            if(((float)pos/neg)>=2){
                 for(int c=0; c<20; c++){
                     if(isupper(xlist[c][b])&&isupper(wlist[c][a])){
                         bs=xlist[c][b];

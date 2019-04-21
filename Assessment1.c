@@ -129,8 +129,8 @@ int main()
         }
     }
     //prints the message to stdout and file output.txt, after being read and converted to upper case
-    printf("Message from file\n\n%s\n\n",x); 
-    fprintf(output, "Message from file:\n\n%s\n\n",x);
+    printf("Message from file input.txt\n\n%s\n\n",x); 
+    fprintf(output, "Message from file input.txt\n\n%s\n\n",x);
     
     char z[k]; //creates an array identical to array x. This is used to copy array x into array z to save the message from manipulation
 
@@ -396,7 +396,7 @@ void decode_caesarwokey(char *x, char *z, int k,int *keyr){
 
 void decode_substitutionwokey(char *x, int k, char *z, char *calcfreq, char *subkeyde, FILE *output){
                   //ABCDEFGHIJKLMNOPQRSTUVWXYZ
-    char actfreq[]="ETAOINSRHDLUCMWFGYPBVKXJQZ";
+    char actfreq[]="ETAOINSRHDLUCMWFGYPBVKJXQZ";
 
     FILE *list;
     list=fopen("list.txt", "r");
@@ -568,7 +568,7 @@ void decode_substitutionwokey(char *x, int k, char *z, char *calcfreq, char *sub
 
             if(((float)pos/neg)>=2){
                 for(int c=0; c<20; c++){
-                    if(isupper(xlist[c][b])&&isupper(wlist[c][a])){
+                    if(isupper(xlist[c][b]) && isupper(wlist[c][a])){
                         bs=xlist[c][b];
                         as=wlist[c][a];
                         ac=as-65; //what it should be

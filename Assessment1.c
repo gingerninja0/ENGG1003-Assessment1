@@ -25,29 +25,28 @@ void decode_substitutionz(char *z, int k, char *calcfreq, char *subkeyde);
 
 void decode_substitutionwokey(char *x, int k, char *z, char *calcfreq, char *subkeyde, FILE *output);
 
-/*
- * TO DO LIST
- * fix decode_caesarwokey, able to decode long messages but not short ones, maybe copy checker from substitution cipher
- */
-
+/*main() contains reading and writing to file (most of the time) and also handles mode selection*/
 int main()
 {
-    int k=10; //k is the size of the array which is made by checking amount of characters in the input file, if not set to 0 then sometimes does not run
-    char c;
-    int key,select,i;
-    int keyr[1];
-    char subkeyen[27]=""; 
-    char subkeyde[26];
-    char calcfreq[27]="";
-
+    int k=10; //k is the size of the array that the message is put into, k is made by checking amount of characters in the input file
+    char c; //a char used to store char's read from files
+    int key,select,i=0; //key is the key used in the rotation cipher, select is the mode chosen, i is a counter used throughout main and initialised to 0
+    int keyr[1]; //used to send the key back to main in decoding a rotation cipher with an unknown key
+    char subkeyen[27]=" "; //array used to store 26 letter key which is inputed in file, is set to size 27 and includes a space character so the key is printed correctly
+    char subkeyde[26]; //array used to store the 26 letter decode key which is created using the funtcion create_substitution_key and create_substitution_keywgkey
+    char calcfreq[27]=" "; //array used to store the frequency of letters from substitution decription, is set to size 27 and includes a space character so the key is printed correctly
+    
+    //declaring file pointers, input is where the initial message is, setup is mode and key selection, output is where the message is sent after executing mode
     FILE *input;
     FILE *setup;
     FILE *output;
     
-    input=fopen("input.txt", "r");
-    setup=fopen("setup.txt", "r");
-    output=fopen("output.txt","w");
+    //open each file
+    input=fopen("input.txt", "r"); //set mode to read
+    setup=fopen("setup.txt", "r"); //set mode to read
+    output=fopen("output.txt","w");//set mode to write
     
+    //if any of the files don't exist then print and error and stop the program by returning 0
     if(input==NULL){
         perror("Input fopen()");
         return 0;
@@ -61,13 +60,14 @@ int main()
         return 0;
     }
     
-    //while not at EOF k++ which is size of file, and therefore message
+    //this finds the size of the message, by checking if at end of file and while it is not adding 1 to k
     while((c=getc(input))!=EOF){
-        k++;
+        k++; //increment size by 1
     }
-    rewind(input); //resets to start of file after reading size
+    rewind(input); //resets to start of file after reading size, ready for inputing message into array
     
-    char x[k];
+    //creates array of size k, which was calculated previously, this is done to maximise efficiency and reduce ram usage
+    char x[k]; //array where the message is stored
     
     //used to find where to set file pointer, delete before upload/////////////////////////////////////////////////////////////////////////////////////////
     /*int isel=0;
@@ -77,104 +77,106 @@ int main()
         position++;
     }
     rewind(input);
-    printf("\n\n%d\n\n",position);*/
+    printf("\n\n%d\n\n",position);*///////////////////////////////////////////////////////////////////////////////////////////////////////////////
     
-    fseek(setup, 387, SEEK_SET );
+    fseek(setup, 387, SEEK_SET ); //sets file pointer to character 387 to skip over menu and jump to where the mode is selected
         
-    fscanf(setup, "%d", &select);
+    fscanf(setup, "%d", &select); //read this character to select mode
     
-    fseek(setup, 405, SEEK_SET );
+    fseek(setup, 405, SEEK_SET ); //sets file pointer to character 405 to skip over menu and mode select and jump to where key begins
     
-    i=0;
-    
+    //if the selected mode is 1 or 2 then the key must be an integer, so it is read as such, else the key must be a string of 26 letters
+    //if mode 3 or 6 is selected then the key inputed is ignored to improve ease of use
     if(select<3){
-        fscanf(setup, "%d", &key);
+        fscanf(setup, "%d", &key); //puts integer into key
     }
     else if(select!=3 && select!=6){
+        //reads all 26 integers into array subkeyen, starting index at 0 using i initialised previously
         while(i<26){
-            fscanf(setup, "%c", &c);
-            if(isupper(c)){
-                subkeyen[i]=c;
-                i++;
-            }
-        }
-    }
-    
-    //puts message into array x
-    for(i=0; i<k; i++){
-        fscanf(input, "%c", &c);
-        //if not at EOF then read character into x
-        if(feof(input)==0){
-            //if the character is a lower case letter, make it upper case and then add to array x 
+            fscanf(setup, "%c", &c); //read char and put into c
+            //if the key is lower case, then it is made upper case by subtracting 32 to shift it from [97,122] to [65,90]
             if(islower(c)){
                 c-=32;
             }
-            x[i]=c;
+            subkeyen[i]=c; //this char is then put into index i of array subkeyen
+            i++; //i is then incremented to put next char into the next element of array subkeyen
+        }
+    }
+    
+    //puts message into element i of array x
+    for(i=0; i<k; i++){
+        fscanf(input, "%c", &c); //read char and put into c
+        //if not at the end of the file then read character into element i of array x
+        if(feof(input)==0){
+            //if the message includes a newline character, this is included into message so it is a perfect copy of what was inputed
+            if(c==10){
+                i--;
+            }
+            //if the key is lower case, then it is made upper case by subtracting 32 to shift it from [97,122] to [65,90]
+            if(islower(c)){
+                c-=32;
+            }
+            x[i]=c; //puts character into element i of array x
   
         }
-        //fills up extra chars in x[] to null to prevent unwanted characters being printed
+        //when at end of file the extra elements of the array are filled with NULL to stop unwanted letters being printed
         else    {
+            //while not at end of array put NULL into element i of array x, then increment i
             while(i<k){
                 x[i]=0;
                 i++;
             }
         }
     }
-
-    printf("Message from file\n\n%s\n\n",x); //prints the message after being read and converted to upper case
+    //prints the message to stdout and file output.txt, after being read and converted to upper case
+    printf("Message from file\n\n%s\n\n",x); 
     fprintf(output, "Message from file:\n\n%s\n\n",x);
     
-    //                 abcdefghijklmnopqrstuvwxyz   the alphabet
-    //char subkeyen[]="ZEBRASCDFGHIJYKLMNOPQTUVWX"; //reference list for substitution encoder/decode
-    
-    
-    
+    char z[k]; //creates an array identical to array x. This is used to copy array x into array z to save the message from manipulation
 
-    char z[k];
-
-    //prints selected cypher and key in different ways depending one selection
+    //using mode selected and key, the respective messages are printed to indicate what mode was selected and what key was used and also the resulting message
     
-    //make sure printing is consistent, consistent spaceing etc//////////////////////////////////////////////////////////////////////////////////////////////////////
     switch(select){
-        case 1:
-            printf("Encoding message using caesar cypher using key: %d\n\n",key);
-            encode_caesar(x,k,key); //call encode_caesar()
-            printf("%s",x);
-            fprintf(output, "Encoding message using caesar cypher using key: %d\n\nEncoded message:\n\n%s",key,x);
+        case 1: //mode is encode using rotation cipher
+            printf("Encoding message using caesar cypher using key: %d\n\n",key); //prints mode and key to stdout
+            encode_caesar(x,k,key); //call encode_caesar() to encode message using rotation cipher with a selected key
+            printf("%s",x); //print resulting message to stdout
+            fprintf(output, "Encoding message using caesar cypher using key: %d\n\nEncoded message:\n\n%s",key,x); //print mode, key and resulting message to file output.txt
             break;
-        case 2:
-            printf("Decoding message using caesar cypher using key %d\n\n",key);
-            decode_caesarwkey(x,k,key); //call caesar decode_caesarwkey()
-            printf("%s",x);
-            fprintf(output, "Decoding message using caesar cypher using key: %d\n\nDecoded message:\n\n%s",key,x);
+        case 2: //mode is decode using rotation cipher with a known key
+            printf("Decoding message using caesar cypher using key %d\n\n",key); //prints mode and key to stdout
+            decode_caesarwkey(x,k,key); //call decode_caesarwkey() to decode message using rotation cipher with a selected key
+            printf("%s",x); //print resulting message to stdout
+            fprintf(output, "Decoding message using caesar cypher using key: %d\n\nDecoded message:\n\n%s",key,x); //print mode, key and resulting message to file output.txt
             break;
-        case 3: //need to send to file
-            printf("Decoding message using caesar cypher, using spell checker\n");
-            decode_caesarwokey(x,z,k,keyr); //call decode_caesarwokey() to decode message with out a key being provided
-            printf("\nKey found was: %d\n\nMessage decoded using this key\n\n%s",keyr[1],x);
-            fprintf(output, "Decoding message using caesar cypher using key found through spell checking, key is: %d\n\nDecoded message:\n\n%s",keyr[1],x);
-            //need to add printing to file
+        case 3: //mode is decode using rotation cipher with an unknown key
+            printf("Decoding message using caesar cypher, using spell checker\n"); //prints mode to stdout
+            decode_caesarwokey(x,z,k,keyr); //call decode_caesarwokey() to decode message without a key being provided
+            printf("\nKey found was: %d\n\nMessage decoded using this key\n\n%s",keyr[1],x); //print the key that was calculated from an array, and print resulting message, both to stdout
+            fprintf(output, "Decoding message using caesar cypher using key found through spell checking, key is: %d\n\nDecoded message:\n\n%s",keyr[1],x); //print mode, calculated key and resulting message to file output.txt
             break;
-        case 4:
-            printf("Encoding message using substitution cypher with key: %s\n\n",subkeyen);
-            encode_substitution(x,k,subkeyen);
-            printf("%s",x);
-            fprintf(output, "Encoding message using substitution cypher using key: %s\n\nEncoded message:\n\n%s",subkeyen,x);
+        case 4: //mode is encode using substitution cipher
+            printf("Encoding message using substitution cypher with key: %s\n\n",subkeyen); //prints mode and key to stdout
+            encode_substitution(x,k,subkeyen); //call encode_substitution() to encode message using substitution cipher with a selected key
+            printf("%s",x); //print resulting message to stdout
+            fprintf(output, "Encoding message using substitution cypher using key: %s\n\nEncoded message:\n\n%s",subkeyen,x); //print mode, key and resulting message to file output.txt
             break;
-        case 5:
-            printf("Decoding message using substitution cypher using substitution key: %s\n\n",subkeyen);
-            decode_substitution(x,k,subkeyen,subkeyde);
-            printf("%s",x);
-            fprintf(output, "Decoding message using substitution cypher using key: %s\n\nEncoded message:\n\n%s",subkeyen,x);
+        case 5: //mode is decode using substitution cipher with a known key
+            printf("Decoding message using substitution cypher using substitution key: %s\n\n",subkeyen); //prints mode and key to stdout
+            decode_substitution(x,k,subkeyen,subkeyde); //call decode_substitution() to decode message using substitution cipher with a selected key
+            printf("%s",x); //print resulting message to stdout
+            fprintf(output, "Decoding message using substitution cypher using key: %s\n\nEncoded message:\n\n%s",subkeyen,x); //print mode, key and resulting message to file output.txt
             break;    
-        case 6:
-            //this prints within the function as it is complex and it difficult to print everything in the correct order
+        case 6: //mode is decode using substitution cipher with an unknown key
+            //this prints within the function as it is complex and is difficult to print everything in the correct order
             //writing to file is also done within the function to reduce complexity
+            //prints mode to stdout and file output.txt
             printf("Decoding message using substitution cypher using statistical analysis\n\n");
             fprintf(output, "Decoding message using substitution cypher using statistical analysis\n\n");
-            decode_substitutionwokey(x,k,z,calcfreq,subkeyde,output);
+            decode_substitutionwokey(x,k,z,calcfreq,subkeyde,output); //call decode_substitutionwokey() to decode message using substitution cipher without a key being provided
             break;
     }
+    //close all the files
     fclose(input);
     fclose(setup);
     fclose(output);
@@ -182,60 +184,98 @@ int main()
     return 0;
 }
 
+/*Decodes the message using the subtitution cipher. This is done by creating a key which is a reverse of what was inputed. Using this key the message is decoded by checking if element x[i] is upper case, if it is the result is an integer in the range [0,25] this is then used as the index of subkeyde[] which reads the element in that index and puts that into element x[i] as the new decoded letter*/
 void decode_substitution(char *x, int k, char *subkeyen, char *subkeyde){
-    create_substitution_key(subkeyen,subkeyde);
-    int code;
-    for(int n=0; n<k; n++){
-        if(isupper(x[n])){
-            code=x[n]-65;
-            x[n]=subkeyde[code];
+    create_substitution_key(subkeyen,subkeyde); //call create_substitution_key() to create the key used to decode message
+    int code; //integer used as the index of letter in key subkeyde[]
+    //this for() loop increments through message decoding upper case letters
+    for(int i=0; i<k; i++){
+        //if the element x[i] is upper case it is decoded
+        if(isupper(x[i])){
+            code=x[i]-65; //finds the element in x[i] which is subtracted by 65 to put it in the range [0,25], this is stored in code. This is then used as the index for the respective letter in subkeyde[]
+            x[i]=subkeyde[code]; //finds element in subkeyde[code] which is then put into x[i], which is the decoded letter
         }
     }
 }
 
+/*Encodes the message using the substitution cipher. This is done by checking if element x[i] is upper case, if it is the result is an integer in the range [0,25], this is then used as the index of subkeyen[] which reads the element in that index and puts that into element x[i] as the new encoded letter*/
 void encode_substitution(char *x, int k, char *subkeyen){
-    int code;
-    for(int n=0; n<k; n++){
-        if(isupper(x[n])){
-            code=x[n]-65;
-            x[n]=subkeyen[code];
+    int code; //integer used as the index of letter in key subkeyen[]
+    //this for() loop increments through message encoding upper case letters
+    for(int i=0; i<k; i++){
+        //if the element x[i] is upper case it is encoded
+        if(isupper(x[i])){
+            code=x[i]-65; //finds the element in x[i] which is subtracted by 65 to put it in the range [0,25], this is stored in code. This is then used as the index for the respective letter in subkeyen[]
+            x[i]=subkeyen[code]; //finds element in subkeyen[code] which is then put into x[i], which is the encoded letter
         }    
     }
 }
 
-/*copys each element of array x into array z, used in brute force decoding of caesar cypher*/
+/*Copys each element of array x into array z. This is done by finding element x[i] and putting it into element z[i]*/
 void copy_array_xz(char *x, char *z, int k){
+    //this for() loop increments through message copying each element x[i] into element z[i]
     for(int i=0; i<k; i++){
         z[i]=x[i]; //copies element x[i] into element z[i]
     }
 }
 
+/*Creates the key used for decoding the substitution cipher. This is done by finding the element in subkeyen[i], 65 is then subtracted and this is stored in l. l becomes the index of subkeyde[] where i+65 is stored (i+65, so i is shifted to the range [65,90])*/
 void create_substitution_key(char *subkeyen, char *subkeyde){
-    int l;
-    for(int n=0; n<26; n++){
-        if(isupper(subkeyen[n])){
-            l=subkeyen[n]-65;
-            subkeyde[l]=n+65;
-        }
+    int l; //index of subkeyde[]
+    //this for() loop increments through [0,25] to put each letter i+65 into the respective index subkeyde[]
+    for(int i=0; i<26; i++){
+        l=subkeyen[i]-65; //finds letter in index i of subkeyen[], 65 is then subtracted to put this into the range [0,25], this is then stored in l and is used as the index to store the letter i+65
+        subkeyde[l]=i+65; //puts i+65 (so it is upper case in the range [65,90]) into the index subkeyde[l], which creats a key which is used to decode the message
     }
 }
 
-/*encodes array x by a key which is read from file input.txt, finishes at final element k*/
+/*Encodes the message using the rotation cipher. This is done by checking if element x[i] is upper case, if it is the key is added to the element*/
 void encode_caesar(char *x, int k, int key){
-    for(int n=0; n<k; n++){
-        //this only encodes capital letters, leaves punctuation and spaces unencoded
-        if(isupper(x[n])){
-            x[n]=(((x[n]-65)+key)%26)+65; //encode formula, replaces letter x[n] with output from encryption formula
+    //this for() loop increments through message encoding upper case letters
+    for(int i=0; i<k; i++){
+        //if the element x[i] is upper case it is encoded
+        if(isupper(x[i])){
+            x[i]=(((x[i]-65)+key)%26)+65; //encode formula, x[i]-65 to put into range [0,25], then the key is added, then the modulus is taken, then 65 is added to put the result into the range [65,90] so it is an upper case letter
         }
     }
 }
 
-/*decodes array x by a key which is read from file input.txt, finishes at final element k*/
+/*Decodes the message using the rotation cipher. This is done by checking if element x[i] is upper case, if it is the key is subtracted from the element*/
 void decode_caesarwkey(char *x, int k, int key){
-    for(int n=0; n<k; n++){
-        //this only decodes capital letters, leaves punctuation and spaces undecoded
-        if(isupper(x[n])){
-            x[n]=((26+(x[n]-65)-key)%26)+65; //decode formula, replaces letter x[n] with output from decryption formula
+    //this for() loop increments through message decoding upper case letters
+    for(int i=0; i<k; i++){
+        //if the element x[i] is upper case it is decoded
+        if(isupper(x[i])){
+            x[i]=((26+(x[i]-65)-key)%26)+65; //decode formula, x[i]-65 to put into range [0,25], then 26 is added so if (x[i]-65)-key is <0 the modulus operator will work (adding 26 does nothing in other cases as the modulus of 26 is 0 which does not effect the answer) then the key is added, then the modulus is taken, then 65 is added to put the result into the range [65,90] so it is an upper case letter
+        }
+    }
+}
+
+//The next 2 functions are similar to some previous functions but are only called when decoding substitution cipher with no key provided
+
+/*Decodes the message using the subtitution cipher once a key has been found. This is done by creating a key which is a reverse of what was calculated. Using this key the message is decoded by checking if element x[i] is upper case, if it is the result is an integer in the range [0,25] this is then used as the index of subkeyde[] which reads the element in that index and puts that into element x[i] as the new decoded letter*/
+void decode_substitutionwgkey(char *x, int k, char *calcfreq, char *subkeyde){
+    create_substitution_key(calcfreq,subkeyde); //call create_substitution_key() to create the key used to decode message
+    int code; //integer used as the index of letter in key subkeyde[]
+    ///this for() loop increments through message decoding upper case letters
+    for(int i=0; i<k; i++){
+        //if the element x[i] is upper case it is decoded
+        if(isupper(x[i])){
+            code=x[i]-65; //finds the element in x[i] which is subtracted by 65 to put it in the range [0,25], this is stored in code. This is then used as the index for the respective letter in subkeyde[]
+            x[i]=subkeyde[code]; //finds element in subkeyde[code] which is then put into x[i], which is the decoded letter
+        }
+    }
+}
+
+/*Decodes the message using the subtitution cipher, used to update z[] once a letter has been swapped. This is done by creating a key which is a reverse of what was calculated. Using this key the message is decoded by checking if element z[i] is upper case, if it is the result is an integer in the range [0,25] this is then used as the index of subkeyde[] which reads the element in that index and puts that into element z[i] as the new decoded letter*/
+void decode_substitutionz(char *z, int k, char *calcfreq, char *subkeyde){
+    create_substitution_key(calcfreq,subkeyde); //call create_substitution_key() to create the key used to decode message
+    int code; //integer used as the index of letter in key subkeyde[]
+    for(int i=0; i<k; i++){
+        //if the element x[i] is upper case it is decoded
+        if(isupper(z[i])){
+            code=z[i]-65; //finds the element in z[i] which is subtracted by 65 to put it in the range [0,25], this is stored in code. This is then used as the index for the respective letter in subkeyde[]
+            z[i]=subkeyde[code]; //finds element in subkeyde[code] which is then put into z[i], which is the decoded letter
         }
     }
 }
@@ -340,7 +380,6 @@ void decode_caesarwokey(char *x, char *z, int k,int *keyr){
                 }
                 
                 if(pos>neg && neg==0){
-                    printf("%d   %d\n\n",pos,neg);
                     keyact=key;
                     key=26;
                     b=p;
@@ -353,37 +392,6 @@ void decode_caesarwokey(char *x, char *z, int k,int *keyr){
     }
     keyr[1]=keyact; //fix this so it prints correct key (test a <=>26)
     decode_caesarwkey(x,k,keyact);
-}
-
-void create_substitution_keywgkey(char *calcfreq, char *subkeyde){
-    int l;
-    for(int n=0; n<26; n++){
-        if(isupper(calcfreq[n])){
-            l=calcfreq[n]-65;
-            subkeyde[l]=n+65;
-        }
-    }
-}
-void decode_substitutionwgkey(char *x, int k, char *calcfreq, char *subkeyde){
-    create_substitution_key(calcfreq,subkeyde);
-    int code;
-    for(int n=0; n<k; n++){
-        if(isupper(x[n])){
-            code=x[n]-65;
-            x[n]=subkeyde[code];
-        }
-    }
-}
-
-void decode_substitutionz(char *z, int k, char *calcfreq, char *subkeyde){
-    create_substitution_key(calcfreq,subkeyde);
-    int code;
-    for(int n=0; n<k; n++){
-        if(isupper(z[n])){
-            code=z[n]-65;
-            z[n]=subkeyde[code];
-        }
-    }
 }
 
 void decode_substitutionwokey(char *x, int k, char *z, char *calcfreq, char *subkeyde, FILE *output){

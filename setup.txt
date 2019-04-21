@@ -12,11 +12,11 @@ Substitution Modes
 
 Select mode: 6
 
-Select key: QWERTYUIOPASDFGHJKLZXCVBNM
+Select key: 
 
 NOTES
     when selecting mode and key, input these 1 space after the colon.
     Ensure key is correct for mode selected, if not this will cause odd behaviour.
     Key does not need to be inputed for mode 3 and 6.
-    In input.txt, message starts at start of line, message must only be on line 1.
+    In input.txt, message can start anywhere, but if on a new line, this will be reflected in output
     In output.txt, message from input.txt is printed, and resulting message is printed, other information is  printed and this is described when it occurs.

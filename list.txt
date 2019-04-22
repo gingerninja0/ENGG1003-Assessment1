@@ -278,8 +278,6 @@ west
 what
 when
 whom
-wide
-wife
 will
 wind
 with

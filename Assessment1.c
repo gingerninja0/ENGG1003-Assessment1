@@ -42,9 +42,9 @@ int main()
     FILE *output;
     
     //open each file
-    input=fopen("input.txt", "r"); //set mode to read
-    setup=fopen("setup.txt", "r"); //set mode to read
-    output=fopen("output.txt","w");//set mode to write
+    input=fopen("input.txt", "r"); //set mode to read, file reads message
+    setup=fopen("setup.txt", "r"); //set mode to read, file reads setup
+    output=fopen("output.txt","w");//set mode to write, file writes result
     
     //if any of the files don't exist then print and error and stop the program by returning 0
     if(input==NULL){
@@ -150,9 +150,9 @@ int main()
             fprintf(output, "Decoding message using caesar cypher using key: %d\n\nDecoded message:\n\n%s",key,x); //print mode, key and resulting message to file output.txt
             break;
         case 3: //mode is decode using rotation cipher with an unknown key
-            printf("Decoding message using caesar cypher, using spell checker\n"); //prints mode to stdout
+            printf("Decoding message using caesar cypher with no key provided\n"); //prints mode to stdout
             decode_caesarwokey(x,z,k,keyr); //call decode_caesarwokey() to decode message without a key being provided
-            printf("\nKey found was: %d\n\nMessage decoded using this key\n\n%s",keyr[1],x); //print the key that was calculated from an array, and print resulting message, both to stdout
+            printf("\nKey found: %d\n\nMessage decoded using this key\n\n%s",keyr[1],x); //print the key that was calculated from an array, and print resulting message, both to stdout
             fprintf(output, "Decoding message using caesar cypher using key found through spell checking, key is: %d\n\nDecoded message:\n\n%s",keyr[1],x); //print mode, calculated key and resulting message to file output.txt
             break;
         case 4: //mode is encode using substitution cipher
@@ -280,118 +280,144 @@ void decode_substitutionz(char *z, int k, char *calcfreq, char *subkeyde){
     }
 }
 
-void decode_caesarwokey(char *x, char *z, int k,int *keyr){
-    FILE *list;
-    list=fopen("list.txt", "r");
-    
-    int n=0,l=0,keyact;
-    char c;
-    
-    while((c=getc(list))!=EOF){
-        if(isspace(c)){
-            n++;
-        }
-        l++;
-    }
-    rewind(list);
-    
-    char wlist[20][n];
+/*NEED TO DO THIS*///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+void decode_caesarwokey(char *x, char *z, int k,int *keyr){
+    
+    
+    FILE *list; //declaring a file pointer to list, list contains the dictionary of likly words in the message
+    list=fopen("list.txt", "r"); //open list.txt to read words into an array
+    
+    int n=0,l=0,keyact; //n and l are used to store words, n is the amount of words, calculated by measuring white space and l measures every character. keyact is the key found and used to decode the final message
+    char c; //char where characters are stored which are then put into array wlist
+    
+    //while not at the end of file, count words and characters
+    while((c=getc(list))!=EOF){
+        //if the character is a space then this must be a new word
+        if(isspace(c)){
+            n++; //increment word count
+        }
+        l++; //increment character count
+    }
+    rewind(list); //put file pointer at start of file
+    
+    char wlist[20][n]; //create an array the size of the amount of words in the file, each word can be 20 characters long
+    
+    //NULL array wlist as a precaution
     for(int i=0; i<n; i++){
         for(int j=0; j<20; j++){
-            wlist[j][i]=0;
+            wlist[j][i]=0; //each element of array wlist is NULL-ed
         }
     }
     
-    int j=0,o=0;;
+    int j=0,o=0; //j is the word position and o is the character posititon
     
+    //this places each word in columns, for each character in the array list
     for(int i=0; i<l; i++){
-        fscanf(list, "%c", &c);
-        
+        fscanf(list, "%c", &c); //read the character the file pointer is at and store it in c
+        //if it is lower case make it upper case by subtracting 32 to put it in the range [65,90]
         if(islower(c)){
             c-=32;
         }
+        //put the character in to array index wlist[o][j]
         wlist[o][j]=c;
-        o++;
-            
+        o++; //increment o so next char goes into the next position of the array
+        
+        //if there is a space the word must have ended so where there is a space the rest of array wlist[][j] is filled with NULL characters
         if(isspace(c))    {
+            //for the rest of the array, make the element NULL
             for(int a=o; a<20; a++){
                 wlist[a][j]=0;
             }
-            j++;
-            o=0;
+            j++; //increment j so the next column is selected
+            o=0; //o is reset to 0 so the next word starts at the first position in the array
         }
     }
 
-    int p=0;
+    int p=0; //p is the amount of words in the inputed message
     
+    //while not at the end of message, count words
     for(int i=0; i<k; i++){
         if(isspace(x[i])){
-            p++;
+            p++; //increment word count
         }
     }
 
-    char xlist[20][100*p]; //needs to be this big for an unknown reason (should only need to be size p,) ie does not work with small messages when p
+    char xlist[20][100*p]; //create an array the size of the amount of words in the message, each word can be 20 characters long, must be 100 times large for an unknown reason, but it is necessary
     
+    //NULL array xlist as a precaution
     for(int i=0; i<k; i++){
         for(int j=0; j<20; j++){
-            xlist[j][i]=0;
+            xlist[j][i]=0; //each element of array wlist is NULL-ed
         }
     }
     
-    o=0;
-    int neg,pos;
+    
+    o=0; //o is the character posititon which is reset to start of column
+    int neg,pos; //these are used to score the similarity of one word to another, if a character is identical to another, pos if same, neg if different, after each word they are compared and if pos>neg and neg=0 then the words are identical
+    
+    /*Spell Checker*/
+   
+   //cycles through each key until one creats a word that exactally matches anothe word
     for(int key=0; key<26; key++){
-        copy_array_xz(x,z,k);
-        decode_caesarwkey(z,k,key);
-        j=0;
+        copy_array_xz(x,z,k); //call copy_array_xz(), array z[] now contains the message which will be used to test keys
+        decode_caesarwkey(z,k,key); //the message is decoded using the key from the for loop, this increments each loop
+        j=0; //j is set to 0 so the first word of the message is put into the first position of array xlist[][]
+        //this cycles through each word of the message and puts them into array xlist
         for(int i=0; j<p; i++){
-            c=z[i];
+            c=z[i]; //put element z[i] into c
+            //if the character is upper case the letter is added to array xlist[][], elst set the character to a space and cycle to the next word
             if(isupper(c)){
-                xlist[o][j]=c;
-                o++;
+                xlist[o][j]=c; //puts the upper case letter into array element xlist[o][j]
+                o++; //increment o so the next letter goes into the next position
             }
             else    {
-                xlist[o][j]=32;
-                j++;
-                o=0;
+                xlist[o][j]=32; //if its not an upper case letter, set to a space
+                j++; //increment j to select the next word
+                o=0;  //o is reset to 0 so the next word starts at the first position in the array
             }
         }
-       
-        for(int b=0; b<p; b++){ 
+        
+        //increment through each word of the message for each key
+        for(int b=0; b<p; b++){
+            //increment through each word of the dictionary for each word of the message
             for(int a=0; a<n; a++){
+                //reset score
                 pos=0;
                 neg=0;
-            
+                
+                //increment through each letter of the selected word of the message and list
                 for(int c=0; c<20; c++){
-                    char b1=xlist[c][b];
-                    char a1=wlist[c][a];
+                    char b1=xlist[c][b]; //b1 is the letter of the word from the message
+                    char a1=wlist[c][a]; //a1 is the letter of the word from the dictionary
+                    //if they are both upper case, they are compared
                     if(isupper(b1)&&isupper(a1)){
+                        //if they are different the neg value is incremented
                         if(a1!=b1){
                             neg++;
                             }
+                        //if they are the same the pos value is incremented    
                         if(a1==b1){
                             pos++;
                         } 
                     }
+                    //if one of the characters are not upper case then the words must be different lengths and therefore different words so neg is incremented
                     else if(isupper(b1)||isupper(a1)){
-                        neg+=20;
+                        neg++;
                     }
                 }
-                
+                //after the full words are compared then pos and neg values are compared, if pos>neg and neg=0 then the words must be the same
                 if(pos>neg && neg==0){
-                    keyact=key;
-                    key=26;
-                    b=p;
-                    a=n;
-                    pos=0;
-                    neg=0;
+                    keyact=key; //the guessed key must then be the actualt key, this is stored as keyact as the key that is found
+                    key=26; //the main loop incrementing through keys is then quit
+                    b=p; //the message loop is quit
+                    a=n; //the dictionary loop is quit
                 }
             }
         }
     }
-    keyr[1]=keyact; //fix this so it prints correct key (test a <=>26)
-    decode_caesarwkey(x,k,keyact);
+    keyr[1]=keyact; //keyact is stored in array keyr[1] to be used to print in main
+    decode_caesarwkey(x,k,keyact); //the original message is then decoded using the calculated key, the resulting message is then printed in main
 }
 
 void decode_substitutionwokey(char *x, int k, char *z, char *calcfreq, char *subkeyde, FILE *output){
@@ -492,8 +518,8 @@ void decode_substitutionwokey(char *x, int k, char *z, char *calcfreq, char *sub
         }
     }
     
-    printf("Frequency of letters in: English followed by message:\n");
-    fprintf(output, "Frequency of letters in: English followed by message:\n");
+    printf("Frequency of letters in English followed by frequency of letters in message:\n\n");
+    fprintf(output, "Frequency of letters in English followed by frequency of letters in message:\n\n");
     
     for(int i=0; i<26; i++){
         printf("%c   %c  %d\n",actfreq[i],freq[0][i],freq[1][i]);
@@ -600,7 +626,7 @@ void decode_substitutionwokey(char *x, int k, char *z, char *calcfreq, char *sub
                 a=n;
             }
         }
-    } 
+    }
     
     decode_substitution(x,k,calcfreq,subkeyde);
     printf("Key calculated using spell checker: %s\n\n",calcfreq);

@@ -10,11 +10,13 @@ Substitution Modes
 5: Decode using substitution cypher with a known key
 6: Decode using substitution cypher with an unknown key
 
-Select mode: 3
+Select mode: 6
 
-Select key: 
+Select key: 4
 
 Message is inputed in input.txt and outputed to output.txt
+
+
 
 NOTES
     -When selecting mode and key, input these 1 space after the colon.

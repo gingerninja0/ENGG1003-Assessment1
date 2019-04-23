@@ -17,8 +17,6 @@ void create_substitution_key(char *subkeyen, char *subkeyde);
 
 void decode_substitution(char *x, int k, char *subkeyen, char *subkeyde);
 
-void create_substitution_keywgkey(char *calcfreq, char *subkeyde);
-
 void decode_substitutionwgkey(char *x, int k, char *calcfreq, char *subkeyde);
 
 void decode_substitutionz(char *z, int k, char *calcfreq, char *subkeyde);
@@ -68,16 +66,6 @@ int main()
     
     //creates array of size k, which was calculated previously, this is done to maximise efficiency and reduce ram usage
     char x[k]; //array where the message is stored
-    
-    //used to find where to set file pointer, delete before upload/////////////////////////////////////////////////////////////////////////////////////////
-    /*int isel=0;
-    int position=0;
-    
-    while((c=getc(setup))!=EOF){
-        position++;
-    }
-    rewind(input);
-    printf("\n\n%d\n\n",position);*///////////////////////////////////////////////////////////////////////////////////////////////////////////////
     
     fseek(setup, 387, SEEK_SET ); //sets file pointer to character 387 to skip over menu and jump to where the mode is selected
         
@@ -280,12 +268,11 @@ void decode_substitutionz(char *z, int k, char *calcfreq, char *subkeyde){
     }
 }
 
-/*NEED TO DO THIS*///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
+/*Decodes the message using the rotation cipher where no key has been provided. A list of words from file list.txt are put into array wlist, and the message is put into array xlist. The message is then decoded using a key and each word from the message is compared to each word from the dictionary. This is repeated for each key, once a word from the message matches a word from the dictionary then that is assumed to be the key used to encode the message, this key is saved and used to decode the entire message.*/
 void decode_caesarwokey(char *x, char *z, int k,int *keyr){
     
     
-    FILE *list; //declaring a file pointer to list, list contains the dictionary of likly words in the message
+    FILE *list; //declaring a file pointer to list, list contains the dictionary of likely words in the message
     list=fopen("list.txt", "r"); //open list.txt to read words into an array
     
     int n=0,l=0,keyact; //n and l are used to store words, n is the amount of words, calculated by measuring white space and l measures every character. keyact is the key found and used to decode the final message
@@ -310,7 +297,7 @@ void decode_caesarwokey(char *x, char *z, int k,int *keyr){
         }
     }
     
-    int j=0,o=0; //j is the word position and o is the character posititon
+    int j=0,o=0; //j is the word position and o is the character posititon, both are initially 0
     
     //this places each word in columns, for each character in the array list
     for(int i=0; i<l; i++){
@@ -343,7 +330,7 @@ void decode_caesarwokey(char *x, char *z, int k,int *keyr){
         }
     }
 
-    char xlist[20][100*p]; //create an array the size of the amount of words in the message, each word can be 20 characters long, must be 100 times large for an unknown reason, but it is necessary
+    char xlist[20][100*p]; //create an array the size of the amount of words in the message, each word can be 20 characters long, must be 100 times largeer for an unknown reason, but it is necessary so don't question it, ignore it and move on
     
     //NULL array xlist as a precaution
     for(int i=0; i<k; i++){
@@ -358,7 +345,7 @@ void decode_caesarwokey(char *x, char *z, int k,int *keyr){
     
     /*Spell Checker*/
    
-   //cycles through each key until one creats a word that exactally matches anothe word
+   //cycles through each key until one creats a word that exactally matches another word
     for(int key=0; key<26; key++){
         copy_array_xz(x,z,k); //call copy_array_xz(), array z[] now contains the message which will be used to test keys
         decode_caesarwkey(z,k,key); //the message is decoded using the key from the for loop, this increments each loop
@@ -412,6 +399,7 @@ void decode_caesarwokey(char *x, char *z, int k,int *keyr){
                     key=26; //the main loop incrementing through keys is then quit
                     b=p; //the message loop is quit
                     a=n; //the dictionary loop is quit
+                    //these force an exit from the spell checker//
                 }
             }
         }
@@ -420,101 +408,116 @@ void decode_caesarwokey(char *x, char *z, int k,int *keyr){
     decode_caesarwkey(x,k,keyact); //the original message is then decoded using the calculated key, the resulting message is then printed in main
 }
 
+
 void decode_substitutionwokey(char *x, int k, char *z, char *calcfreq, char *subkeyde, FILE *output){
-                  //ABCDEFGHIJKLMNOPQRSTUVWXYZ
-    char actfreq[]="ETAOINSRHDLUCMWFGYPBVKJXQZ";
+                  //ABCDEFGHIJKLMNOPQRSTUVWXYZ //the alphabet, used to match letter in debugging
+    char actfreq[]="ETAOINSRHDLUCMWFGYPBVKJXQZ"; //the frequency of letters in the english language
 
-    FILE *list;
-    list=fopen("list.txt", "r");
+    FILE *list; //declaring a file pointer to list, list contains the dictionary of likely words in the message
+    list=fopen("list.txt", "r"); //open list.txt to read words into an array
     
-    int n=0,l=0;
-    char c;
+    int n=0,l=0; //n and l are used to store words, n is the amount of words, calculated by measuring white space and l measures every character. keyact is the key found and used to decode the final message
+    char c; //char where characters are stored which are then put into array wlist
     
+    //while not at the end of file, count words and characters
     while((c=getc(list))!=EOF){
+        //if the character is a space then this must be a new word
         if(isspace(c)){
-            n++;
+            n++; //increment word count
         }
-        l++;
+        l++; //increment character count
     }
-    rewind(list);
+    rewind(list); //put file pointer at start of file
     
-    char wlist[20][n];
+    char wlist[20][n]; //create an array the size of the amount of words in the file, each word can be 20 characters long
 
+    //NULL array wlist as a precaution
     for(int i=0; i<n; i++){
         for(int j=0; j<20; j++){
-            wlist[j][i]=0;
+            wlist[j][i]=0; //each element of array wlist is NULL-ed
         }
     }
     
-    int j=0,o=0;;
+    int j=0,o=0; //j is the word position and o is the character posititon, both are initially 0
     
+    //this places each word in columns, for each character in the array list
     for(int i=0; i<l; i++){
-        fscanf(list, "%c", &c);
-        
+        fscanf(list, "%c", &c); //read the character the file pointer is at and store it in c
+        //if it is lower case make it upper case by subtracting 32 to put it in the range [65,90]
         if(islower(c)){
             c-=32;
         }
+        //put the character in to array index wlist[o][j]
         wlist[o][j]=c;
-        o++;
-            
+        o++; //increment o so next char goes into the next position of the array
+        
+        //if there is a space the word must have ended so where there is a space the rest of array wlist[][j] is filled with NULL characters
         if(isspace(c))    {
+            //for the rest of the array, make the element NULL
             for(int a=o; a<20; a++){
                 wlist[a][j]=0;
             }
-            j++;
-            o=0;
+            j++; //increment j so the next column is selected
+            o=0; //o is reset to 0 so the next word starts at the first position in the array
         }
     }
 
-    int p=10;
+    int p=0; //p is the amount of words in the inputed message
     
+    //while not at the end of message, count words
     for(int i=0; i<k; i++){
-        if(isspace(x[i])||ispunct(x[i])){
-            p++;
+        if(isspace(x[i])){
+            p++; //increment word count
         }
     }
 
-    char xlist[20][100*p];
+    char xlist[20][100*p]; //create an array the size of the amount of words in the message, each word can be 20 characters long, must be 100 times largeer for an unknown reason, but it is necessary so don't question it, ignore it and move on
     
+    //NULL array xlist as a precaution
     for(int i=0; i<k; i++){
         for(int j=0; j<20; j++){
-            xlist[j][i]=0;
+            xlist[j][i]=0; //each element of array wlist is NULL-ed
         }
     }
-    int freq[2][26];
+    
+    int freq[2][26]; //array which stores letters and letter freqency freq[0][] is the letter and freq[1][] is the amount of times that letter occurs
         
-    int t;
+    int t; //t stores the index of the upper case letter which is used to compare with the frequency of letters in english
+    int n1; //n1 is the sorting index, 0 is highest, 25 is lowest
+    int m=26; //the amount of letters in the key, must be 26 as there is 26 letters in the alphabet
+    int x1,x2; //x1 and x2 store the letter in the index freq[1][n1] and freq[1][n1+1] respectivly
+    int y1,y2; //y1 and y2 store the freqency of the letter in the message in x1 and x2 respectivly
     
-    int m=26;
-    int n1; 
-    int x1,x2;
-    int y1,y2;
+    //Bubble Sorter//
     
-    
+    //zeros each letters frequency
     for(int i=0; i<26; i++){
-        freq[0][i]=i+65;
-        freq[1][i]=0;
+        freq[0][i]=i+65; //i+65 puts it in the range of [65,90], so each capital letter is put into array freq[0][i]
+        freq[1][i]=0; //the corresponding frequency is set to 0 
     }
     
+    //counts the frequency of each letter in the message
     for(int i=0; i<k; i++){
+        //if the letter is upper case the corresponding frequenct is incremented
         if(isupper(x[i])){
-            t=x[i]-65;
-            freq[0][t]=x[i];
-            freq[1][t]++; 
+            t=x[i]-65; //in upper case letter is shifted from [65,90] to [0,25] and is used as the index used to increment the frequency
+            freq[1][t]++; //frequency of the letter is incremented
         }
     }
     
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     for(n1=0; n1<m-1; n1++){
         x1=freq[1][n1];
         y1=freq[0][n1];
         x2=freq[1][n1+1];
         y2=freq[0][n1+1];
+        //if the letter after has a higher freqency then the one before it, they are swapped
         if(x2>x1){
             freq[1][n1]=x2;
             freq[0][n1]=y2;
             freq[1][n1+1]=x1;
             freq[0][n1+1]=y1;
-            n1=-1;
+            n1=-1; //n1 is set to -1 so when the for loop increments it is set to 0 (the initial value)
         }
     }
     
@@ -522,7 +525,7 @@ void decode_substitutionwokey(char *x, int k, char *z, char *calcfreq, char *sub
     fprintf(output, "Frequency of letters in English followed by frequency of letters in message:\n\n");
     
     for(int i=0; i<26; i++){
-        printf("%c   %c  %d\n",actfreq[i],freq[0][i],freq[1][i]);
+        printf("%c   %c   %d\n",actfreq[i],freq[0][i],freq[1][i]);
         fprintf(output, "%c   %c  %d\n",actfreq[i],freq[0][i],freq[1][i]);
     }
     
@@ -569,7 +572,7 @@ void decode_substitutionwokey(char *x, int k, char *z, char *calcfreq, char *sub
     int ac,bc;
     int ai,bi;
     
-    /*spell checker*/
+    /*Spell Checker*/
     
     for(int b=0; b<p; b++){
         for(int a=0; a<n; a++){

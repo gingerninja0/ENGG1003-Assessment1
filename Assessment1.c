@@ -369,7 +369,7 @@ void decode_caesarwokey(char *x, char *z, int k,int *keyr){
         for(int b=0; b<p; b++){
             //increment through each word of the dictionary for each word of the message
             for(int a=0; a<n; a++){
-                //reset score
+                //reset scores
                 pos=0;
                 neg=0;
                 
@@ -507,16 +507,17 @@ void decode_substitutionwokey(char *x, int k, char *z, char *calcfreq, char *sub
     
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     for(n1=0; n1<m-1; n1++){
-        x1=freq[1][n1];
-        y1=freq[0][n1];
-        x2=freq[1][n1+1];
-        y2=freq[0][n1+1];
-        //if the letter after has a higher freqency then the one before it, they are swapped
+        x1=freq[1][n1]; //the frequency of the letter y1
+        y1=freq[0][n1]; //the letter in freq[0][n1]
+        x2=freq[1][n1+1]; //the frequency of the letter in y2
+        y2=freq[0][n1+1]; //the letter in freq[0][n1+1]
+        //if the letter freq[0][n1+1] has a higher freqency then freq[0][n1], they are swapped
         if(x2>x1){
-            freq[1][n1]=x2;
-            freq[0][n1]=y2;
-            freq[1][n1+1]=x1;
-            freq[0][n1+1]=y1;
+            //the letter and frequency swap positions in array freq[][]
+            freq[1][n1]=x2; //frequency of y2 is put in position of y1
+            freq[0][n1]=y2; //letter x2 is put in position of x1
+            freq[1][n1+1]=x1; //frequency of y1 is put in position of y2
+            freq[0][n1+1]=y1; //letter x1 is put in position of x2
             n1=-1; //n1 is set to -1 so when the for loop increments it is set to 0 (the initial value)
         }
     }
@@ -525,6 +526,7 @@ void decode_substitutionwokey(char *x, int k, char *z, char *calcfreq, char *sub
     fprintf(output, "Frequency of letters in English followed by frequency of letters in message:\n\n");
     
     for(int i=0; i<26; i++){
+        ////prints the english letter frequency highest to lowest, then the message letter frequency highest to lowest, and its relevant frequency score to stdout and file output.txt
         printf("%c   %c   %d\n",actfreq[i],freq[0][i],freq[1][i]);
         fprintf(output, "%c   %c  %d\n",actfreq[i],freq[0][i],freq[1][i]);
     }

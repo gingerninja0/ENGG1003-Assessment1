@@ -19,10 +19,11 @@ Message is inputed in input.txt and outputed to output.txt
 
 
 NOTES
-    -When selecting mode and key, input these 1 space after the colon.
+    -When selecting mode, key, and letter frequency, input these 1 space after the colon.
     -Ensure key is correct for mode selected, if not this will cause odd behaviour.
     -Key must be [0,25] for modes 1-2 and 26 different letters for modes 4-5
     -Key does not need to be inputed for mode 3 and 6.
     -In input.txt, message can start anywhere, but if on a new line, this will be copied to output
     -In output.txt, message from input.txt is printed, and resulting message is printed, other information is also printed and this is described when it occurs.
     -The dictionary of words is stored in list.txt
+    -In mode 6, if letters have the same frequency they can sometimes be swapped, will sometimes cause some letters to be wrong in final message. To fix this swap the offending letters in the array actfreq on line: siaudofghiusdfhgiusdfhgiusdhfgiusdhfgiushdfgiuhshdfgiusdfigojsdfgoijsdfgoijsdfoigjsdoifggffffgggggoidfsjgoisdfjgoidfjoigsfdjofjidgsiojdfgsdgfogdfsodsgfoijfdgoijgfdsiojdgfiojdfgsiojgfdsiojgfdsoijdgfsiojfdsgijofdgsiojdgfsiojdfsgiojdgfsijodfgsjiodfsgjoidfgiojsjoidfgsiojdgsfiojdgfsijodfgsjoissdoifgjsoidfjgoisdjfgoisjdfgoijsdfhoihsdfhoijdfshiojhfdsoijfdhsiojhdfoijhfoijhdfsoidfhsoijdfhjoidhfsojidfhsoijdfhsijofdhsoijfdhsiodfshoisdfgoijsdoifjgsoidfjgosidfjgsoidfjgoisdfjgjknbxcvibuherioutjhwqeirouyuirfnviuhadswrtiuhjgbigmnoisdurjiepowjuhygmnbgfoikjhpjdsmnaotrifgyhbpnjfuiojhi

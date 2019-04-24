@@ -505,13 +505,15 @@ void decode_substitutionwokey(char *x, int k, char *z, char *calcfreq, char *sub
         }
     }
     
-    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //Sorting Algorithm//
+    
+    //cycles through list of frequencies until they are in order from highest to lowest
     for(n1=0; n1<m-1; n1++){
         x1=freq[1][n1]; //the frequency of the letter y1
         y1=freq[0][n1]; //the letter in freq[0][n1]
         x2=freq[1][n1+1]; //the frequency of the letter in y2
         y2=freq[0][n1+1]; //the letter in freq[0][n1+1]
-        //if the letter freq[0][n1+1] has a higher freqency then freq[0][n1], they are swapped
+        //if the letter freq[0][n1+1] has a higher freqency then freq[0][n1], they are swapped. If they are equal then they remain in their positions, this can sometimes cause problems!, to fix swap the offending letters in the actfreq[] string
         if(x2>x1){
             //the letter and frequency swap positions in array freq[][]
             freq[1][n1]=x2; //frequency of y2 is put in position of y1
@@ -521,53 +523,58 @@ void decode_substitutionwokey(char *x, int k, char *z, char *calcfreq, char *sub
             n1=-1; //n1 is set to -1 so when the for loop increments it is set to 0 (the initial value)
         }
     }
-    
+    //describes what will be printed after these
     printf("Frequency of letters in English followed by frequency of letters in message:\n\n");
     fprintf(output, "Frequency of letters in English followed by frequency of letters in message:\n\n");
     
     for(int i=0; i<26; i++){
-        ////prints the english letter frequency highest to lowest, then the message letter frequency highest to lowest, and its relevant frequency score to stdout and file output.txt
+        //prints the english letter frequency highest to lowest, then the message letter frequency highest to lowest, and its relevant frequency score to stdout and file output.txt
         printf("%c   %c   %d\n",actfreq[i],freq[0][i],freq[1][i]);
         fprintf(output, "%c   %c  %d\n",actfreq[i],freq[0][i],freq[1][i]);
     }
     
-    int a;
+    int a; //a stores the index of the letter from actfreq[] which is used to create calcfreq[], which is used to decode the message
     
+    //this creats a key which hopefully contains part of the key used to encode the message, the rest is made using a spell check below
+    //puts each letter from actfreq[] in the range [0,25], this is the actual frequency of letters in english, the letter used to encode the respective letter is matched and stored in calcfreq[a]
     for(int i=0; i<26; i++){
-        a=actfreq[i]-65;
-        calcfreq[a]=freq[0][i];
+        a=actfreq[i]-65; //find the index of the letter in range [0,25]
+        calcfreq[a]=freq[0][i]; //a is then used as the index of calcfreq[a] to store the letter found using statistical analysis, from freq[0][i]
     }
     
-    copy_array_xz(x,z,k);
+    copy_array_xz(x,z,k); //call copy_array_xz() to save store the original message so all the testing is done on a copy
     
+    //print the key calculated from statistical analysis to stdout and output.txt
     printf("\nKey calculated from statistical analysis: %s\n\n", calcfreq);
     fprintf(output, "\n\nKey calculated from statistical analysis: %s\n\n", calcfreq);
     
-    decode_substitutionz(z,k,calcfreq,subkeyde);
-
+    decode_substitutionz(z,k,calcfreq,subkeyde); //call decode_substitutionz() to decode the copied message using the calculated key
+    
+    //print the message decoded using the key calculated from statistical analysis
     printf("Message decoded using this key\n\n%s\n\n\n",z);
     fprintf(output, "Message decoded using this key\n\n%s\n\n\n",z);
-    
-    j=0;
+
+    j=0; //j is set to 0 so the first word of the message is put into the first position of array xlist[][]
+    //this cycles through each word of the message and puts them into array xlist
     for(int i=0; i!=k; i++){
-        c=z[i];
+        c=z[i]; //put element z[i] into c
+        //if the character is upper case the letter is added to array xlist[][], elst set the character to a space and cycle to the next word
         if(isupper(c)||ispunct(c)){
-            xlist[o][j]=c;
-            o++;
+            xlist[o][j]=c; //puts the upper case letter into array element xlist[o][j]
+            o++; //increment o so the next letter goes into the next position
         }    
         else {
-            xlist[o][j]=0;
-            j++;
-            o=0;
+            xlist[o][j]=0; //if its not an upper case letter, set to NULL
+            j++; //increment j to select the next word
+            o=0; //o is reset to 0 so the next word starts at the first position in the array
         }
     }
     
-    int calcheck[27];
+    int calcheck[27]; //initialise an array of the same size as calcfreq, this is used to remember if a letter has been swapped or not
     
     for(int i=0; i<27; i++){
         calcheck[i]=0;
     }
-    
     
     int pos,neg;
     int as,bs;
@@ -597,7 +604,7 @@ void decode_substitutionwokey(char *x, int k, char *z, char *calcfreq, char *sub
                 }
             }
 
-            if(((float)pos/neg)>=2){
+            if(((float)pos/neg)>=1.3){
                 for(int c=0; c<20; c++){
                     if(isupper(xlist[c][b]) && isupper(wlist[c][a])){
                         bs=xlist[c][b];

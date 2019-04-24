@@ -408,7 +408,7 @@ void decode_caesarwokey(char *x, char *z, int k,int *keyr){
     decode_caesarwkey(x,k,keyact); //the original message is then decoded using the calculated key, the resulting message is then printed in main
 }
 
-
+/*Decodes the message using the substitution cipher where no key has been provided. A list of words from file list.txt are put into array wlist. The letters in the message are counted to create a list from most common to least common using a bubble sorter. This is then used to create a key and is used to decode the message, this should give a outline of the message by decoding most of the letters. A spell checker is then run to match words and matching words are used to change the key to create a key which more closley matches the one that was used to encode the message. Once the spell checker is complete the new key is used to decode the message, which is then printed*/
 void decode_substitutionwokey(char *x, int k, char *z, char *calcfreq, char *subkeyde, FILE *output){
                   //ABCDEFGHIJKLMNOPQRSTUVWXYZ //the alphabet, used to match letter in debugging
     char actfreq[]="ETAOINSRHDLUCMWFGYPBVKJXQZ"; //the frequency of letters in the english language
@@ -542,12 +542,11 @@ void decode_substitutionwokey(char *x, int k, char *z, char *calcfreq, char *sub
         calcfreq[a]=freq[0][i]; //a is then used as the index of calcfreq[a] to store the letter found using statistical analysis, from freq[0][i]
     }
     
-    copy_array_xz(x,z,k); //call copy_array_xz() to save store the original message so all the testing is done on a copy
-    
     //print the key calculated from statistical analysis to stdout and output.txt
     printf("\nKey calculated from statistical analysis: %s\n\n", calcfreq);
     fprintf(output, "\n\nKey calculated from statistical analysis: %s\n\n", calcfreq);
     
+    copy_array_xz(x,z,k); //call copy_array_xz() to save store the original message so all the testing is done on a copy
     decode_substitutionz(z,k,calcfreq,subkeyde); //call decode_substitutionz() to decode the copied message using the calculated key
     
     //print the message decoded using the key calculated from statistical analysis
@@ -613,34 +612,39 @@ void decode_substitutionwokey(char *x, int k, char *z, char *calcfreq, char *sub
             }
             //after the full words are compared then pos and neg values are compared, if pos/neg is >=1.3 the words are assumed to be the same as most of the letters in each word match
             if(((float)pos/neg)>=1.3){
+                //this cycles through the two words and each letter is saved in its position in the key
                 for(int c=0; c<20; c++){
                     if(isupper(xlist[c][b]) && isupper(wlist[c][a])){
                         bs=xlist[c][b]; //b1 is the letter of the word from the message
                         as=wlist[c][a]; //a1 is the letter of the word from the dictionary
-                        ac=as-65; //what it should be
-                        bc=bs-65; //what it is
-                        
+                        //these create an index to be used in finding the letter in calcfreq[]
+                        bc=bs-65; //what the letter is in the message
+                        ac=as-65; //what the letter is in the dictionary
+                        //if both of the letters have not been saved in thier final positions then the letters in the key used to decode the letters in the message are swapped and the one getting swapped to create the correct key is saved in its position
                         if(calcheck[ac]==0 && calcheck[bc]==0){
-                            ai=calcfreq[ac];
-                            bi=calcfreq[bc];
-                            calcfreq[ac]=bi;
-                            calcfreq[bc]=ai;
-                            calcheck[ac]=1;
+                            ai=calcfreq[ac]; //the letter in calcfreq[ac], used to save the letter to swap
+                            bi=calcfreq[bc]; //the letter in calcfreq[bc], used to save the letter to swap
+                            calcfreq[ac]=bi; //the letter that was in calcfreq[bc] is put into calcfreq[ac]
+                            calcfreq[bc]=ai; //the letter that was in calcfreq[ac] is put into calcfreq[bc]
+                            calcheck[ac]=1; //the letter moved to create the correct key has its position saved
                         }
                     }
                 }
-                copy_array_xz(x,z,k);
-                decode_substitutionz(z,k,calcfreq,subkeyde);
+                copy_array_xz(x,z,k); //call copy_array_xz() to save store the original message so the new key (made from swapping letters in known words) is tested on a copy of the original message
+                decode_substitutionz(z,k,calcfreq,subkeyde); //call decode_substitutionz() to decode the copied message using the new calculated key
+                j=0; //j is set to 0 so the first word of the message is put into the first position of array xlist[][]
+                //this cycles through each word of the updated message and puts them into array xlist, this is used to check if words have been changed which may make them closer to what they should be
                 for(int i=0; i!=k; i++){
-                    c=z[i];
+                    c=z[i]; //put element z[i] into c
+                    //if the character is upper case the letter is added to array xlist[][], elst set the character to a space and cycle to the next word
                     if(isupper(c)||ispunct(c)){
-                        xlist[o][j]=c;
-                        o++;
+                        xlist[o][j]=c; //puts the upper case letter into array element xlist[o][j]
+                        o++; //increment o so the next letter goes into the next position
                     }    
                     else {
-                        xlist[o][j]=0;
-                        j++;
-                        o=0;
+                        xlist[o][j]=0; //if its not an upper case letter, set to NULL
+                        j++; //increment j to select the next word
+                        o=0; //o is reset to 0 so the next word starts at the first position in the array
                     }
                 }
                 a=n;
@@ -648,10 +652,11 @@ void decode_substitutionwokey(char *x, int k, char *z, char *calcfreq, char *sub
         }
     }
 
-    decode_substitution(x,k,calcfreq,subkeyde);
+    decode_substitution(x,k,calcfreq,subkeyde); //call decode_substitution() to use the key which has been fully checked and altered to decode the original message
+    //print the new key, this is used to decode the entire message, printed to stdout and output.txt
     printf("Key calculated using spell checker: %s\n\n",calcfreq);
     fprintf(output, "Key calculated using spell checker: %s\n\n",calcfreq);
-    
+    //print the message decoded using the new key, printed to stout and output.txt
     printf("Message decoded using this new key\n\n%s",x);
     fprintf(output, "Message decoded using this new key\n\n%s",x);
 }

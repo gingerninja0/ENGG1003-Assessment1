@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <ctype.h>
 
+/*Mode selection through setup.txt*/
 /*INCLUDE HIGH LEVEL FUNCTIONALITY OF PROGRAM HERE INCLUDING STUDENT ID AND PROJECT NAME*/
 
 void copy_array_xz(char *x, char *z, int k);

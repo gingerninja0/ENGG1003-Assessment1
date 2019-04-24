@@ -612,8 +612,8 @@ void decode_substitutionwokey(char *x, int k, char *z, char *calcfreq, char *sub
                 }
             }
             //after the full words are compared then pos and neg values are compared, if pos/neg is >=1.3 the words are assumed to be the same as most of the letters in each word match
+            if(((float)pos/neg)>=1.3){
                 for(int c=0; c<20; c++){
-                    
                     if(isupper(xlist[c][b]) && isupper(wlist[c][a])){
                         bs=xlist[c][b]; //b1 is the letter of the word from the message
                         as=wlist[c][a]; //a1 is the letter of the word from the dictionary
@@ -647,7 +647,7 @@ void decode_substitutionwokey(char *x, int k, char *z, char *calcfreq, char *sub
             }
         }
     }
-    
+
     decode_substitution(x,k,calcfreq,subkeyde);
     printf("Key calculated using spell checker: %s\n\n",calcfreq);
     fprintf(output, "Key calculated using spell checker: %s\n\n",calcfreq);

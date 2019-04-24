@@ -377,7 +377,7 @@ void decode_caesarwokey(char *x, char *z, int k,int *keyr){
                 for(int c=0; c<20; c++){
                     char b1=xlist[c][b]; //b1 is the letter of the word from the message
                     char a1=wlist[c][a]; //a1 is the letter of the word from the dictionary
-                    //if they are both upper case, they are compared
+                    //if the letters are both upper case, they are compared
                     if(isupper(b1)&&isupper(a1)){
                         //if they are different the neg value is incremented
                         if(a1!=b1){
@@ -571,44 +571,52 @@ void decode_substitutionwokey(char *x, int k, char *z, char *calcfreq, char *sub
     }
     
     int calcheck[27]; //initialise an array of the same size as calcfreq, this is used to remember if a letter has been swapped or not
-    
+    //sets each value to zero as none of the letters in the key have been swapped
     for(int i=0; i<27; i++){
         calcheck[i]=0;
     }
     
-    int pos,neg;
+    int pos,neg; //these are used to score the similarity of one word to another, if a character is identical to another, pos if same, neg if different, after each word they are compared and if pos>neg and neg=0 then the words are identical
     int as,bs;
     int ac,bc;
     int ai,bi;
     
     /*Spell Checker*/
     
+    //increment through each word of the message
     for(int b=0; b<p; b++){
+        //increment through each word of the dictionary for each word of the message
         for(int a=0; a<n; a++){
+            //reset pos and neg score before word comparison
             pos=0;
             neg=0;
             
+            //increment through each letter of the selected word of the message and list
             for(int c=0; c<20; c++){
-                char b1=xlist[c][b];
-                char a1=wlist[c][a];
+                char b1=xlist[c][b]; //b1 is the letter of the word from the message
+                char a1=wlist[c][a]; //a1 is the letter of the word from the dictionary
+                //if the letters are both upper case, they are compared
                 if(isupper(b1)&&isupper(a1)){
-                   if(a1!=b1){
+                    //if they are different the neg value is incremented
+                    if(a1!=b1){
                         neg++;
                     }
+                    //if they are the same the pos value is incremented
                     if(a1==b1){
                         pos++;
                     } 
                 }
+                //if one of the characters are not upper case then the words must be different lengths and therefore different words so neg is made a large number so pos/neg is never greater than or equal to 1.3
                 else if(isupper(b1)||isupper(a1)){
                     neg+=20;
                 }
             }
-
-            if(((float)pos/neg)>=1.3){
+            //after the full words are compared then pos and neg values are compared, if pos/neg is >=1.3 the words are assumed to be the same as most of the letters in each word match
                 for(int c=0; c<20; c++){
+                    
                     if(isupper(xlist[c][b]) && isupper(wlist[c][a])){
-                        bs=xlist[c][b];
-                        as=wlist[c][a];
+                        bs=xlist[c][b]; //b1 is the letter of the word from the message
+                        as=wlist[c][a]; //a1 is the letter of the word from the dictionary
                         ac=as-65; //what it should be
                         bc=bs-65; //what it is
                         

@@ -60,7 +60,7 @@ int main()
     }
     
     //this finds the size of the message, by checking if at end of file and while it is not adding 1 to k
-    while((c=getc(input))!=EOF){
+    while((fscanf(input, "%c", &c))!=EOF){
         k++; //increment size by 1
     }
     rewind(input); //resets to start of file after reading size, ready for inputing message into array
@@ -280,7 +280,7 @@ void decode_caesarwokey(char *x, char *z, int k,int *keyr){
     char c; //char where characters are stored which are then put into array wlist
     
     //while not at the end of file, count words and characters
-    while((c=getc(list))!=EOF){
+    while((fscanf(list, "%c", &c))!=EOF){
         //if the character is a space then this must be a new word
         if(isspace(c)){
             n++; //increment word count
@@ -421,7 +421,7 @@ void decode_substitutionwokey(char *x, int k, char *z, char *calcfreq, char *sub
     char c; //char where characters are stored which are then put into array wlist
     
     //while not at the end of file, count words and characters
-    while((c=getc(list))!=EOF){
+    while((fscanf(list, "%c", &c))!=EOF){
         //if the character is a space then this must be a new word
         if(isspace(c)){
             n++; //increment word count

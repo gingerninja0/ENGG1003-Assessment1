@@ -12,7 +12,7 @@ Substitution Modes
 
 Select mode: 3
 
-Select key: 
+Select key: 19
 
 Message is inputed in input.txt and outputed to output.txt
 

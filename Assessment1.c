@@ -1,8 +1,47 @@
+/* 
+ * Student id: 3329357
+ * Assessment 1, encryption and decryption of text
+ * 
+ */
+
+/*This program handles the encoding and decoding of a message, inputed in input.txt, using the rotation cypher or substitution cypher, the message is outputed to stdout and the file output.txt. Mode selection is achieved through selecting the mode in the file setup.txt. The encoding is done using a key inputed by the user through the file setup.txt. The message can be decoded with or without a key being provided, if the key used to encode the message is known it is inputed by the user through the file setup.txt.*/
+
+/*The File layout for setup.txt is below, incase of accidental deletion this can be copied to a file called setup.txt, an input.txt and output.txt file will also need to be created, instructions on how to use these are given in NOTES in setup.txt
+
+Mode select
+
+Rotation Modes
+1: Encode using rotation cypher with a chosen key
+2: Decode using rotation cypher with a known key
+3: Decode using rotation cypher with an unknown key
+
+Substitution Modes
+4: Encode using substitution cypher with a chosen key
+5: Decode using substitution cypher with a known key
+6: Decode using substitution cypher with an unknown key
+
+Select mode: 3
+
+Select key: 
+
+Message is inputed in input.txt and outputed to output.txt
+
+
+
+NOTES
+    -When selecting mode, key, and letter frequency, input these 1 space after the colon.
+    -Ensure key is correct for mode selected, if not this will cause odd behaviour.
+    -Key must be [0,25] for modes 1-2 and 26 different letters for modes 4-5
+    -Key does not need to be inputed for mode 3 and 6.
+    -In input.txt, message can start anywhere, but if on a new line, this will be copied to output
+    -In output.txt, message from input.txt is printed, and resulting message is printed, other information is also printed and this is described when it occurs.
+    -The dictionary of words is stored in list.txt
+    -In mode 6, if letters have the same frequency they can sometimes be swapped, will sometimes cause some letters to be wrong in final message. To fix this swap the offending letters in the array actfreq on line: siaudofghiusdfhgiusdfhgiusdhfgiusdhfgiushdfgiuhshdfgiusdfigojsdfgoijsdfgoijsdfoigjsdoifggffffgggggoidfsjgoisdfjgoidfjoigsfdjofjidgsiojdfgsdgfogdfsodsgfoijfdgoijgfdsiojdgfiojdfgsiojgfdsiojgfdsoijdgfsiojfdsgijofdgsiojdgfsiojdfsgiojdgfsijodfgsjiodfsgjoidfgiojsjoidfgsiojdgsfiojdgfsijodfgsjoissdoifgjsoidfjgoisdjfgoisjdfgoijsdfhoihsdfhoijdfshiojhfdsoijfdhsiojhdfoijhfoijhdfsoidfhsoijdfhjoidhfsojidfhsoijdfhsijofdhsoijfdhsiodfshoisdfgoijsdoifjgsoidfjgosidfjgsoidfjgoisdfjgjknbxcvibuherioutjhwqeirouyuirfnviuhadswrtiuhjgbigmnoisdurjiepowjuhygmnbgfoikjhpjdsmnaotrifgyhbpnjfuiojhi
+
+*/
+
 #include <stdio.h>
 #include <ctype.h>
-
-/*Mode selection through setup.txt*/
-/*INCLUDE HIGH LEVEL FUNCTIONALITY OF PROGRAM HERE INCLUDING STUDENT ID AND PROJECT NAME*/
 
 void copy_array_xz(char *x, char *z, int k);
 
@@ -47,7 +86,7 @@ int main()
     
     //if any of the files don't exist then print and error and stop the program by returning 0
     if(input==NULL){
-        perror("Input fopen()");
+        perror("input fopen()");
         return 0;
     }
     if(setup==NULL){
@@ -55,7 +94,7 @@ int main()
         return 0;
     }
     if(output==NULL){
-        perror("Output fopen()");
+        perror("output fopen()");
         return 0;
     }
     
@@ -76,7 +115,7 @@ int main()
     
     //if the selected mode is 1 or 2 then the key must be an integer, so it is read as such, else the key must be a string of 26 letters
     //if mode 3 or 6 is selected then the key inputed is ignored to improve ease of use
-    if(select<3){
+    if(select<=2){
         fscanf(setup, "%d", &key); //puts integer into key
     }
     else if(select!=3 && select!=6){
@@ -111,10 +150,7 @@ int main()
         //when at end of file the extra elements of the array are filled with NULL to stop unwanted letters being printed
         else    {
             //while not at end of array put NULL into element i of array x, then increment i
-            while(i<k){
-                x[i]=0;
-                i++;
-            }
+            x[i]=0;            
         }
     }
     //prints the message to stdout and file output.txt, after being read and converted to upper case
@@ -164,6 +200,9 @@ int main()
             fprintf(output, "Decoding message using substitution cypher using statistical analysis\n\n");
             decode_substitutionwokey(x,k,z,calcfreq,subkeyde,output); //call decode_substitutionwokey() to decode message using substitution cipher without a key being provided
             break;
+        default:
+            printf("Unknown mode seleced, must be [1,6]");
+            fprintf(output,"Unknown mode seleced, must be [1,6]");
     }
     //close all the files
     fclose(input);
@@ -246,7 +285,7 @@ void decode_caesarwkey(char *x, int k, int key){
 void decode_substitutionwgkey(char *x, int k, char *calcfreq, char *subkeyde){
     create_substitution_key(calcfreq,subkeyde); //call create_substitution_key() to create the key used to decode message
     int code; //integer used as the index of letter in key subkeyde[]
-    ///this for() loop increments through message decoding upper case letters
+    //this for() loop increments through message decoding upper case letters
     for(int i=0; i<k; i++){
         //if the element x[i] is upper case it is decoded
         if(isupper(x[i])){
@@ -260,6 +299,7 @@ void decode_substitutionwgkey(char *x, int k, char *calcfreq, char *subkeyde){
 void decode_substitutionz(char *z, int k, char *calcfreq, char *subkeyde){
     create_substitution_key(calcfreq,subkeyde); //call create_substitution_key() to create the key used to decode message
     int code; //integer used as the index of letter in key subkeyde[]
+    //this for() loop increments through message decoding upper case letters
     for(int i=0; i<k; i++){
         //if the element x[i] is upper case it is decoded
         if(isupper(z[i])){

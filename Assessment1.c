@@ -37,7 +37,7 @@ NOTES
     -In input.txt, message can start anywhere, but if on a new line, this will be copied to output
     -In output.txt, message from input.txt is printed, and resulting message is printed, other information is also printed and this is described when it occurs.
     -The dictionary of words is stored in list.txt
-    -In mode 6, if letters have the same frequency they can sometimes be swapped, will sometimes cause some letters to be wrong in final message. To fix this swap the offending letters in the array actfreq on line: 4578
+    -In mode 6, if letters have the same frequency they can sometimes be swapped, will sometimes cause some letters to be wrong in final message. To fix this swap the offending letters in the array actfreq on line: 457
 
 ---
 */

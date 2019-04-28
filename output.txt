@@ -1,9 +1,5 @@
 Message from file input.txt
 
-MAX JNBVD UKHPG YHQ CNFIL HY MAX ETSR WHZ
 
-Decoding message using caesar cypher using key found through spell checking, key is: 19
 
-Decoded message:
-
-THE QUICK BROWN FOX JUMPS OF THE LAZY DOG
+Error unknown mode seleced, must be [1,6]

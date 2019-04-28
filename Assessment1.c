@@ -6,7 +6,8 @@
 
 /*This program handles the encoding and decoding of a message, inputed in input.txt, using the rotation cypher or substitution cypher, the message is outputed to stdout and the file output.txt. Mode selection is achieved through selecting the mode in the file setup.txt. The encoding is done using a key inputed by the user through the file setup.txt. The message can be decoded with or without a key being provided, if the key used to encode the message is known it is inputed by the user through the file setup.txt.*/
 
-/*The File layout for setup.txt is below, incase of accidental deletion this can be copied to a file called setup.txt, an input.txt and output.txt file will also need to be created, instructions on how to use these are given in NOTES in setup.txt
+/*The File layout for setup.txt is below, incase of accidental deletion this can be copied to a file called setup.txt, an input.txt and output.txt file will also need to be created, these are empty files, instructions on how to use these are given in NOTES in setup.txt
+---
 
 Mode select
 
@@ -36,12 +37,15 @@ NOTES
     -In input.txt, message can start anywhere, but if on a new line, this will be copied to output
     -In output.txt, message from input.txt is printed, and resulting message is printed, other information is also printed and this is described when it occurs.
     -The dictionary of words is stored in list.txt
-    -In mode 6, if letters have the same frequency they can sometimes be swapped, will sometimes cause some letters to be wrong in final message. To fix this swap the offending letters in the array actfreq on line: siaudofghiusdfhgiusdfhgiusdhfgiusdhfgiushdfgiuhshdfgiusdfigojsdfgoijsdfgoijsdfoigjsdoifggffffgggggoidfsjgoisdfjgoidfjoigsfdjofjidgsiojdfgsdgfogdfsodsgfoijfdgoijgfdsiojdgfiojdfgsiojgfdsiojgfdsoijdgfsiojfdsgijofdgsiojdgfsiojdfsgiojdgfsijodfgsjiodfsgjoidfgiojsjoidfgsiojdgsfiojdgfsijodfgsjoissdoifgjsoidfjgoisdjfgoisjdfgoijsdfhoihsdfhoijdfshiojhfdsoijfdhsiojhdfoijhfoijhdfsoidfhsoijdfhjoidhfsojidfhsoijdfhsijofdhsoijfdhsiodfshoisdfgoijsdoifjgsoidfjgosidfjgsoidfjgoisdfjgjknbxcvibuherioutjhwqeirouyuirfnviuhadswrtiuhjgbigmnoisdurjiepowjuhygmnbgfoikjhpjdsmnaotrifgyhbpnjfuiojhi
+    -In mode 6, if letters have the same frequency they can sometimes be swapped, will sometimes cause some letters to be wrong in final message. To fix this swap the offending letters in the array actfreq on line: 4578
 
+---
 */
 
 #include <stdio.h>
 #include <ctype.h>
+
+//function prototypes, their operation and use are desribed above the function definitions (where the body of the function is written)
 
 void copy_array_xz(char *x, char *z, int k);
 
@@ -63,11 +67,11 @@ void decode_substitutionz(char *z, int k, char *calcfreq, char *subkeyde);
 
 void decode_substitutionwokey(char *x, int k, char *z, char *calcfreq, char *subkeyde, FILE *output);
 
-/*main() contains reading and writing to file (most of the time) and also handles mode selection*/
+/*main() contains reading and writing to file for modes [1,5], mode [6] prints within the function as this simplified the code. main also handles mode selection*/
 int main()
 {
-    int k=10; //k is the size of the array that the message is put into, k is made by checking amount of characters in the input file
-    char c; //a char used to store char's read from files
+    int k=10; //k is the size of the array that the message is put into, k is made by checking amount of characters in the input.txt file, k is initially 10 to create an array for the message which is slightly large than it needs to be to prevent errors
+    char c; //a char used to store characters read from the files
     int key,select,i=0; //key is the key used in the rotation cipher, select is the mode chosen, i is a counter used throughout main and initialised to 0
     int keyr[1]; //used to send the key back to main in decoding a rotation cipher with an unknown key
     char subkeyen[27]=" "; //array used to store 26 letter key which is inputed in file, is set to size 27 and includes a space character so the key is printed correctly
@@ -106,6 +110,7 @@ int main()
     
     //creates array of size k, which was calculated previously, this is done to maximise efficiency and reduce ram usage
     char x[k]; //array where the message is stored
+    char z[k]; //creates an array identical to array x. This is used to copy array x into array z to save the message from manipulation
     
     fseek(setup, 387, SEEK_SET ); //sets file pointer to character 387 to skip over menu and jump to where the mode is selected
         
@@ -136,9 +141,9 @@ int main()
         fscanf(input, "%c", &c); //read char and put into c
         //if not at the end of the file then read character into element i of array x
         if(feof(input)==0){
-            //if the message includes a newline character, this is included into message so it is a perfect copy of what was inputed
+            //if the character is in the message this is added into the message so it is a perfect copy of what was inputed
             if(c==10){
-                i--;
+                i--; //shifts i back by 1 to account for this
             }
             //if the key is lower case, then it is made upper case by subtracting 32 to shift it from [97,122] to [65,90]
             if(islower(c)){
@@ -149,15 +154,12 @@ int main()
         }
         //when at end of file the extra elements of the array are filled with NULL to stop unwanted letters being printed
         else    {
-            //while not at end of array put NULL into element i of array x, then increment i
-            x[i]=0;            
+            x[i]=0; //must be at end of file so the rest of the array is set to NULL characters  
         }
     }
     //prints the message to stdout and file output.txt, after being read and converted to upper case
     printf("Message from file input.txt\n\n%s\n\n",x); 
     fprintf(output, "Message from file input.txt\n\n%s\n\n",x);
-    
-    char z[k]; //creates an array identical to array x. This is used to copy array x into array z to save the message from manipulation
 
     //using mode selected and key, the respective messages are printed to indicate what mode was selected and what key was used and also the resulting message
     
@@ -190,7 +192,7 @@ int main()
             printf("Decoding message using substitution cypher using substitution key: %s\n\n",subkeyen); //prints mode and key to stdout
             decode_substitution(x,k,subkeyen,subkeyde); //call decode_substitution() to decode message using substitution cipher with a selected key
             printf("%s",x); //print resulting message to stdout
-            fprintf(output, "Decoding message using substitution cypher using key: %s\n\nEncoded message:\n\n%s",subkeyen,x); //print mode, key and resulting message to file output.txt
+            fprintf(output, "Decoding message using substitution cypher using key: %s\n\nDecoded message:\n\n%s",subkeyen,x); //print mode, key and resulting message to file output.txt
             break;    
         case 6: //mode is decode using substitution cipher with an unknown key
             //this prints within the function as it is complex and is difficult to print everything in the correct order
@@ -200,9 +202,9 @@ int main()
             fprintf(output, "Decoding message using substitution cypher using statistical analysis\n\n");
             decode_substitutionwokey(x,k,z,calcfreq,subkeyde,output); //call decode_substitutionwokey() to decode message using substitution cipher without a key being provided
             break;
-        default:
-            printf("Unknown mode seleced, must be [1,6]");
-            fprintf(output,"Unknown mode seleced, must be [1,6]");
+        default: //if an unknown mode is inputed in the file setup.txt no function is called and an error is printed stating this
+            printf("Error unknown mode seleced, must be [1,6]");
+            fprintf(output,"Error unknown mode seleced, must be [1,6]");
     }
     //close all the files
     fclose(input);
@@ -408,8 +410,8 @@ void decode_caesarwokey(char *x, char *z, int k,int *keyr){
         
         //increment through each word of the message for each key
         for(int b=0; b<p; b++){
-            //increment through each word of the dictionary for each word of the message
-            for(int a=0; a<n; a++){
+            //increment through each word of the dictionary for each word of the message, three letter words are skipped as some three letter words can be other three letter words with a certain rotation applied eg THE with a rotation of 19 is MAX
+            for(int a=8; a<n; a++){
                 //reset scores
                 pos=0;
                 neg=0;

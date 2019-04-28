@@ -10,9 +10,9 @@ Substitution Modes
 5: Decode using substitution cypher with a known key
 6: Decode using substitution cypher with an unknown key
 
-Select mode: 3
+Select mode: 
 
-Select key: 19
+Select key: 
 
 Message is inputed in input.txt and outputed to output.txt
 
@@ -26,4 +26,4 @@ NOTES
     -In input.txt, message can start anywhere, but if on a new line, this will be copied to output
     -In output.txt, message from input.txt is printed, and resulting message is printed, other information is also printed and this is described when it occurs.
     -The dictionary of words is stored in list.txt
-    -In mode 6, if letters have the same frequency they can sometimes be swapped, will sometimes cause some letters to be wrong in final message. To fix this swap the offending letters in the array actfreq on line: siaudofghiusdfhgiusdfhgiusdhfgiusdhfgiushdfgiuhshdfgiusdfigojsdfgoijsdfgoijsdfoigjsdoifggffffgggggoidfsjgoisdfjgoidfjoigsfdjofjidgsiojdfgsdgfogdfsodsgfoijfdgoijgfdsiojdgfiojdfgsiojgfdsiojgfdsoijdgfsiojfdsgijofdgsiojdgfsiojdfsgiojdgfsijodfgsjiodfsgjoidfgiojsjoidfgsiojdgsfiojdgfsijodfgsjoissdoifgjsoidfjgoisdjfgoisjdfgoijsdfhoihsdfhoijdfshiojhfdsoijfdhsiojhdfoijhfoijhdfsoidfhsoijdfhjoidhfsojidfhsoijdfhsijofdhsoijfdhsiodfshoisdfgoijsdoifjgsoidfjgosidfjgsoidfjgoisdfjgjknbxcvibuherioutjhwqeirouyuirfnviuhadswrtiuhjgbigmnoisdurjiepowjuhygmnbgfoikjhpjdsmnaotrifgyhbpnjfuiojhi
+    -In mode 6, if letters have the same frequency they can sometimes be swapped, will sometimes cause some letters to be wrong in final message. To fix this swap the offending letters in the array actfreq on line: 457

@@ -21,7 +21,7 @@ Substitution Modes
 5: Decode using substitution cypher with a known key
 6: Decode using substitution cypher with an unknown key
 
-Select mode: 3
+Select mode: 
 
 Select key: 
 
@@ -34,10 +34,11 @@ NOTES
     -Ensure key is correct for mode selected, if not this will cause odd behaviour.
     -Key must be [0,25] for modes 1-2 and 26 different letters for modes 4-5
     -Key does not need to be inputed for mode 3 and 6.
+    -When decoding message using rotation cypher with no key provided (mode 3) 3 letter words can be confused for other 3 letter words eg THE with a rotation of 19 is MAX, to skip 3 letter words see line 415 for instructions
     -In input.txt, message can start anywhere, but if on a new line, this will be copied to output
     -In output.txt, message from input.txt is printed, and resulting message is printed, other information is also printed and this is described when it occurs.
     -The dictionary of words is stored in list.txt
-    -In mode 6, if letters have the same frequency they can sometimes be swapped, will sometimes cause some letters to be wrong in final message. To fix this swap the offending letters in the array actfreq on line: 457
+    -In mode 6, if letters have the same frequency they can sometimes be swapped, will sometimes cause some letters to be wrong in final message. To fix this swap the offending letters in the array actfreq on line: 458
 
 ---
 */
@@ -203,8 +204,8 @@ int main()
             decode_substitutionwokey(x,k,z,calcfreq,subkeyde,output); //call decode_substitutionwokey() to decode message using substitution cipher without a key being provided
             break;
         default: //if an unknown mode is inputed in the file setup.txt no function is called and an error is printed stating this
-            printf("Error unknown mode seleced, must be [1,6]");
-            fprintf(output,"Error unknown mode seleced, must be [1,6]");
+            printf("Error unknown mode selected, must be [1,6]");
+            fprintf(output,"Error unknown mode selected, must be [1,6]");
     }
     //close all the files
     fclose(input);
@@ -411,7 +412,7 @@ void decode_caesarwokey(char *x, char *z, int k,int *keyr){
         //increment through each word of the message for each key
         for(int b=0; b<p; b++){
             //increment through each word of the dictionary for each word of the message, three letter words are skipped as some three letter words can be other three letter words with a certain rotation applied eg THE with a rotation of 19 is MAX
-            for(int a=8; a<n; a++){
+            for(int a=0; a<n; a++){ //change from 0 to 8 to skip 3 letter words
                 //reset scores
                 pos=0;
                 neg=0;

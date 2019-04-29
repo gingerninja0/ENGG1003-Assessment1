@@ -2,4 +2,4 @@ Message from file input.txt
 
 
 
-Error unknown mode seleced, must be [1,6]
+Error unknown mode selected, must be [1,6]
